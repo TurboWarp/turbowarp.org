@@ -9,6 +9,21 @@ const statFile = promisify(fs.stat);
 
 const fileTypes = require('./types');
 const hosts = require('./hosts');
+
+// We need to make sure that all the roots have a trailing / to ensure that the path traversal prevention works properly.
+// Otherwise a root of "/var/www" would allow someone to read files in /var/www-top-secret-do-not-read
+for (const hostname of Object.keys(hosts)) {
+  const host = hosts[hostname];
+  host.root = path.join(host.root, '/');
+}
+for (const fileTypeName of Object.keys(fileTypes)) {
+  const fileType = fileTypes[fileTypeName];
+  // Fill in optional properties
+  if (!fileType.encodings) fileType.encodings = [];
+}
+console.log(`Known hosts: ${Object.keys(hosts).join(', ')}`)
+console.log(`Known file types: ${Object.keys(fileTypes).join(', ')}`)
+
 const app = express();
 app.set('etag', 'strong');
 app.set('x-powered-by', false);
@@ -76,16 +91,6 @@ const chooseEncoding = async (acceptedEncodings, fileEncodings, filePath) => {
   return null;
 };
 
-const logicalRedirect = (fileName) => (req, res, next) => {
-  req.logicalPath = fileName;
-  next();
-};
-
-const logicalRedirectWithBranch = (fileName) => (req, res, next) => {
-  req.logicalPath = `/${req.params.branch}${fileName}`;
-  next();
-};
-
 app.use((req, res, next) => {
   const hostname = req.hostname;
   if (!hosts.hasOwnProperty(hostname)) {
@@ -120,10 +125,26 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/js/*', (req, res, next) => {
+  // File names contain hash of content, can cache forever.
+  res.header('Cache-Control', 'public, max-age=315360000, immutable');
+  next();
+});
+app.get('/static/assets/*', (req, res, next) => {
+  // File names contain hash of content, can cache forever.
+  res.header('Cache-Control', 'public, max-age=315360000, immutable');
+  next();
+});
+app.get('/static/blocks-media/*', (req, res, next) => {
+  // File names don't contain hash of content, but these files are hot and will rarely change.
+  res.header('Cache-Control', 'public, max-age=3600, s-maxage=3600, immutable');
+  next();
+});
+
 app.get('/*', asyncHandler(async (req, res, next) => {
   const pathName = req.logicalPath || req.path;
 
-  if (/[^a-zA-Z0-9.\-\/]/.test(pathName)) {
+  if (/[^a-zA-Z0-9.\-\/~]/.test(pathName)) {
     next();
     return;
   }

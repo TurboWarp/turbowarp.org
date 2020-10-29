@@ -10,10 +10,19 @@ const gz = {
 module.exports = {
   '.html': {
     type: 'text/html',
-    encodings: [br, gz]
   },
   '.js': {
     type: 'text/javascript',
     encodings: [br, gz]
+  },
+  '.svg': {
+    type: 'image/svg+xml',
+    encodings: [br, gz]
+  },
+  '.cur': {
+    type: 'image/x-icon',
+  },
+  'mp3': {
+    type: 'audio/mpeg',
   }
 };
