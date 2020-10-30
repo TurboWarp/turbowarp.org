@@ -48,12 +48,14 @@ const findFile = async (file) => {
       if (indexStat.isFile()) {
         return {
           path: indexFile,
+          isDirectory: true,
           stat: indexStat
         };
       }
     } else if (stat.isFile()) {
       return {
         path: file,
+        isDirectory: false,
         stat
       };
     }
@@ -99,6 +101,17 @@ const chooseEncoding = async (acceptedEncodings, fileEncodings, filePath) => {
   return null;
 };
 
+const handleWildcardRedirects = (branchRelativePath) => {
+  if (/^\/(?:\d+\/?)?$/.test(branchRelativePath)) {
+    return '/index.html';
+  } else if (/^\/(?:\d+\/)?editor\/?$/i.test(branchRelativePath)) {
+    return '/editor.html';
+  } else if (/^\/(?:\d+\/)?fullscreen\/?$/i.test(branchRelativePath)) {
+    return '/fullscreen.html';
+  }
+  return null;
+};
+
 app.use((req, res, next) => {
   const hostname = req.hostname;
   if (!hosts.hasOwnProperty(hostname)) {
@@ -110,25 +123,24 @@ app.use((req, res, next) => {
 
   const host = hosts[hostname];
   const branches = host.branches;
-
-  let path = req.path;
-  let prefix = '';
+  const path = req.path;
 
   if (branches) {
     const branchMatch = path.match(/^\/([\w\d_-]+)\//);
     if (branchMatch) {
       const branchName = branchMatch[1];
-      prefix = `/${branchName}`;
-      path = path.substring(prefix.length);
+      const prefix = `/${branchName}`;
+      const branchRelativePath = path.substring(prefix.length);
+      const redirectPath = handleWildcardRedirects(branchRelativePath);
+      if (redirectPath !== null) {
+        req.logicalPath = `${prefix}${redirectPath}`;
+      }
     }
-  }
-
-  if (/^\/(?:\d+\/?)?$/.test(path)) {
-    req.logicalPath = `${prefix}/index.html`;
-  } else if (/^\/(?:\d+\/)?editor\/?$/i.test(path)) {
-    req.logicalPath = `${prefix}/editor.html`;
-  } else if (/^\/(?:\d+\/)?fullscreen\/?$/i.test(path)) {
-    req.logicalPath = `${prefix}/fullscreen.html`;
+  } else {
+    const redirectPath = handleWildcardRedirects(path);
+    if (redirectPath !== null) {
+      req.logicalPath = redirectPath;
+    }
   }
 
   req.root = host.root;
@@ -136,17 +148,17 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/js/*', (req, res, next) => {
+app.get('*/js/*', (req, res, next) => {
   // File names contain hash of content, can cache forever.
   res.header('Cache-Control', 'public, max-age=315360000, immutable');
   next();
 });
-app.get('/static/assets/*', (req, res, next) => {
+app.get('*/static/assets/*', (req, res, next) => {
   // File names contain hash of content, can cache forever.
   res.header('Cache-Control', 'public, max-age=315360000, immutable');
   next();
 });
-app.get('/static/blocks-media/*', (req, res, next) => {
+app.get('*/static/blocks-media/*', (req, res, next) => {
   // File names don't contain hash of content, but these files are hot and will rarely change.
   res.header('Cache-Control', 'public, max-age=3600, immutable');
   next();
@@ -166,12 +178,19 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     return;
   }
 
-  let {path: filePath, stat: fileStat} = await findFile(requestPathName);
-  if (!filePath) {
+  const foundFile = await findFile(requestPathName);
+  if (!foundFile) {
     next();
     return;
   }
+  if (foundFile.isDirectory && !req.path.endsWith('/')) {
+    // If opening a directory, make sure there is a trailing / (fixes relative paths)
+    res.redirect(req.path + '/');
+    return;
+  }
 
+  let filePath = foundFile.path;
+  const fileStat = foundFile.stat;
   const fileLastModified = fileStat.mtime;
 
   const fileType = getFileType(filePath);
