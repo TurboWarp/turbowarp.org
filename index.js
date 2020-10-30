@@ -94,9 +94,12 @@ const chooseEncoding = async (acceptedEncodings, fileEncodings, filePath) => {
 app.use((req, res, next) => {
   const hostname = req.hostname;
   if (!hosts.hasOwnProperty(hostname)) {
-    next(new Error('Invalid hostname'));
+    res.status(400);
+    res.contentType('text/plain');
+    res.send('Invalid Host');
     return;
   }
+
   const host = hosts[hostname];
   const branches = host.branches;
 
