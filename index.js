@@ -26,7 +26,6 @@ console.log(`Known file types: ${Object.keys(fileTypes).join(', ')}`)
 
 const app = express();
 app.set('x-powered-by', false);
-app.set('etag', 'strong');
 app.set('case sensitive routing', false);
 app.set('strict routing', false);
 
@@ -223,7 +222,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   }
 
   // Don't send headers until the end
-  // If we went them earlier, it's possible to have Content-Encoding set incorrectly for a plaintext error message sent later.
+  // If we sent them earlier, it's possible to have Content-Encoding set incorrectly for a plaintext error message sent later.
   res.setHeader('Content-Type', fileType.type);
   res.setHeader('Last-Modified', fileLastModified.toUTCString());
   if (contentEncoding !== null) {
