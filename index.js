@@ -258,4 +258,16 @@ app.use((err, req, res, next) => {
   res.send('Internal server error');
 });
 
-app.listen(process.env.PORT || 8888);
+const port = process.env.PORT || 8888;
+app.listen(port, () => {
+  // Update permissions of unix sockets
+  if (typeof port === 'string' && port.startsWith('/')) {
+    fs.chmod(port, 0o777, (err) => {
+      if (err) {
+        console.error(`could not chmod unix socket: ${err}`);
+        process.exit(1);
+      }
+    });
+  }
+  console.log(`Listening on port ${port}`);
+});
