@@ -2,9 +2,8 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const promisify = require('util').promisify;
+const etag = require('etag');
 const asyncHandler = require('express-async-handler');
-
-const readFile = promisify(fs.readFile);
 const statFile = promisify(fs.stat);
 
 const fileTypes = require('./types');
@@ -189,7 +188,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   }
 
   let filePath = foundFile.path;
-  const fileStat = foundFile.stat;
+  let fileStat = foundFile.stat;
   const fileLastModified = fileStat.mtime;
 
   const fileType = getFileType(filePath);
@@ -205,40 +204,43 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     const bestEncoding = await chooseEncoding(acceptedEncodings, fileEncodings, filePath);
     if (bestEncoding !== null) {
       filePath = bestEncoding.path;
+      fileStat = bestEncoding.stat;
       contentEncoding = bestEncoding.name;
     }
   }
 
-  let contents;
-  try {
-    // We read the entire file into memory as a buffer
-    // I know that a stream would be more memory efficient, but reading the file like this
-    // sets Content-Length and ETag properly without worry of race conditions.
-    contents = await readFile(filePath);
-  } catch (e) {
-    // File does not exist. This is possible if a race condition occurs between when we found the file and when we read the file.
-    next();
-    return;
-  }
+  const stream = fs.createReadStream(filePath);
 
-  // Don't send headers until the end
-  // If we sent them earlier, it's possible to have Content-Encoding set incorrectly for a plaintext error message sent later.
-  res.setHeader('Content-Type', fileType.type);
-  res.setHeader('Last-Modified', fileLastModified.toUTCString());
-  if (contentEncoding !== null) {
-    res.setHeader('Content-Encoding', contentEncoding);
-  }
-  // If there are multiple versions of this file, make sure that proxies won't send the wrong encoding to clients.
-  if (fileEncodings.length > 0) {
-    res.setHeader('Vary', 'Accept-Encoding');
-  }
+  stream.on('open', () => {
+    // Don't send file headers until just before we start sending the file
+    // Otherwise if we sent these earlier, we might send headers that don't make sense for eg. an error message
+    res.setHeader('Content-Type', fileType.type);
+    res.setHeader('Content-Length', fileStat.size);
+    res.setHeader('Last-Modified', fileLastModified.toUTCString());
+    if (contentEncoding !== null) {
+      res.setHeader('Content-Encoding', contentEncoding);
+    }
+    // If there are multiple versions of this file, make sure that proxies won't send the wrong encoding to clients.
+    if (fileEncodings.length > 0) {
+      res.setHeader('Vary', 'Accept-Encoding');
+    }
+    const etagValue = etag(fileStat, {
+      weak: true
+    });
+    res.setHeader('ETag', etagValue);
 
-  // Force browsers to revalidate all files that aren't explicitly cached
-  if (res.getHeader('Cache-Control') === undefined) {
-    res.setHeader('Cache-Control', 'no-cache');
-  }
+    // Force browsers to revalidate all files that aren't explicitly cached
+    if (res.getHeader('Cache-Control') === undefined) {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
 
-  res.send(contents);
+    stream.pipe(res);
+  });
+
+  stream.on('error', (err) => {
+    // This should never happen.
+    next(err);
+  });
 }));
 
 app.use((req, res) => {

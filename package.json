@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "etag": "^1.8.1",
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4"
   }
