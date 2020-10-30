@@ -15,14 +15,29 @@ module.exports = {
     type: 'text/javascript',
     encodings: [br, gz]
   },
+  '.map': {
+    type: 'application/json'
+  },
   '.svg': {
     type: 'image/svg+xml',
     encodings: [br, gz]
   },
+  '.png': {
+    type: 'image/png'
+  },
+  '.jpg': {
+    type: 'image/jpeg'
+  },
+  '.gif': {
+    type: 'image/gif'
+  },
+  '.ico': {
+    type: 'image/x-icon'
+  },
   '.cur': {
     type: 'image/x-icon',
   },
-  'mp3': {
+  '.mp3': {
     type: 'audio/mpeg',
-  }
+  },
 };
