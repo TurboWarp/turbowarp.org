@@ -15,6 +15,9 @@ module.exports = {
     type: 'text/javascript',
     encodings: [br, gz]
   },
+  '.txt': {
+    type: 'text/plain'
+  },
   '.map': {
     type: 'application/json'
   },
