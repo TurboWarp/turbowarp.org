@@ -16,17 +16,19 @@ for (const hostname of Object.keys(hosts)) {
   const host = hosts[hostname];
   host.root = path.join(host.root, '/');
 }
+// Set optional properties
 for (const fileTypeName of Object.keys(fileTypes)) {
   const fileType = fileTypes[fileTypeName];
-  // Fill in optional properties
   if (!fileType.encodings) fileType.encodings = [];
 }
 console.log(`Known hosts: ${Object.keys(hosts).join(', ')}`)
 console.log(`Known file types: ${Object.keys(fileTypes).join(', ')}`)
 
 const app = express();
-app.set('etag', 'strong');
 app.set('x-powered-by', false);
+app.set('etag', 'strong');
+app.set('case sensitive routing', false);
+app.set('strict routing', false);
 
 const safeJoin = (root, file) => {
   const newPath = path.join(root, file);
@@ -44,10 +46,16 @@ const findFile = async (file) => {
       const indexFile = path.join(file, 'index.html');
       const indexStat = await statFile(indexFile);
       if (indexStat.isFile()) {
-        return indexFile;
+        return {
+          path: indexFile,
+          stat: indexStat
+        };
       }
     } else if (stat.isFile()) {
-      return file;
+      return {
+        path: file,
+        stat
+      };
     }
   } catch (e) {
     // File does not exist.
@@ -64,6 +72,7 @@ const getFileType = (file) => {
 };
 
 const chooseEncoding = async (acceptedEncodings, fileEncodings, filePath) => {
+  // Encodings are checked in the order they are specified.
   for (const encoding of fileEncodings) {
     const name = encoding.name;
     if (acceptedEncodings.indexOf(name) === -1) {
@@ -75,7 +84,6 @@ const chooseEncoding = async (acceptedEncodings, fileEncodings, filePath) => {
     try {
       const encodedFileStat = await statFile(encodedFilePath);
       if (encodedFileStat.isFile()) {
-        // This is the best encoding to use.
         return {
           name,
           path: encodedFilePath,
@@ -83,11 +91,11 @@ const chooseEncoding = async (acceptedEncodings, fileEncodings, filePath) => {
         };
       }
     } catch (e) {
-      // File does not exist.
+      // The file for this encoding does not exist, keep checking others.
     }
   }
 
-  // No alternative encodings possible.
+  // No alternative encodings supported.
   return null;
 };
 
@@ -115,11 +123,11 @@ app.use((req, res, next) => {
     }
   }
 
-  if (/^\/(?:\d+\/)?$/.test(path)) {
+  if (/^\/(?:\d+\/?)?$/.test(path)) {
     req.logicalPath = `${prefix}/index.html`;
-  } else if (/^\/(?:\d+\/)?editor\/?$/.test(path)) {
+  } else if (/^\/(?:\d+\/)?editor\/?$/i.test(path)) {
     req.logicalPath = `${prefix}/editor.html`;
-  } else if (/^\/(?:\d+\/)?fullscreen\/?$/.test(path)) {
+  } else if (/^\/(?:\d+\/)?fullscreen\/?$/i.test(path)) {
     req.logicalPath = `${prefix}/fullscreen.html`;
   }
 
@@ -158,11 +166,13 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     return;
   }
 
-  let filePath = await findFile(requestPathName);
+  let {path: filePath, stat: fileStat} = await findFile(requestPathName);
   if (!filePath) {
     next();
     return;
   }
+
+  const fileLastModified = fileStat.mtime;
 
   const fileType = getFileType(filePath);
   if (fileType === null) {
@@ -183,6 +193,9 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 
   let contents;
   try {
+    // We read the entire file into memory as a buffer
+    // I know that a stream would be more memory efficient, but reading the file like this
+    // sets Content-Length and ETag properly without worry of race conditions.
     contents = await readFile(filePath);
   } catch (e) {
     // File does not exist. This is possible if a race condition occurs between when we found the file and when we read the file.
@@ -190,13 +203,21 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     return;
   }
 
-  // Don't send headers until the very end
+  // Don't send headers until the end
+  // If we went them earlier, it's possible to have Content-Encoding set incorrectly for a plaintext error message sent later.
   res.setHeader('Content-Type', fileType.type);
+  res.setHeader('Last-Modified', fileLastModified.toUTCString());
+  if (contentEncoding !== null) {
+    res.setHeader('Content-Encoding', contentEncoding);
+  }
+  // If there are multiple versions of this file, make sure that proxies won't send the wrong encoding to clients.
   if (fileEncodings.length > 0) {
     res.setHeader('Vary', 'Accept-Encoding');
   }
-  if (contentEncoding !== null) {
-    res.setHeader('Content-Encoding', contentEncoding);
+
+  // Force browsers to revalidate all files that aren't explicitly cached
+  if (res.getHeader('Cache-Control') === undefined) {
+    res.setHeader('Cache-Control', 'no-cache');
   }
 
   res.send(contents);
@@ -205,12 +226,12 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 app.use((req, res) => {
   res.status(404);
   res.contentType('text/plain');
-  res.send('404');
+  res.send('404 Not Found');
 });
 
 app.use((err, req, res, next) => {
+  // Do not log errors in production, as it may be possible for someone to abuse console.error's sync behaviors to DoS
   if (app.get('env') === 'development') {
-    // Do not log errors in production, as it may be possible for someone to abuse console.error's sync behaviors to DoS
     console.error(err);
   }
   res.status(500);
