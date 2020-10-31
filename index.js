@@ -8,6 +8,7 @@ const statFile = promisify(fs.stat);
 
 const fileTypes = require('./types');
 const hosts = require('./hosts');
+const stats = require('./stats');
 
 // We need to make sure that all the roots have a trailing / to ensure that the path traversal prevention works properly.
 // Otherwise a root of "/var/www" would allow someone to read files in /var/www-top-secret-do-not-read
@@ -236,6 +237,8 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       res.setHeader('Cache-Control', 'no-cache');
     }
 
+    stats.servedFile();
+
     stream.pipe(res);
   });
 
@@ -246,6 +249,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 }));
 
 app.use((req, res) => {
+  stats.fileNotFound();
   res.status(404);
   res.setHeader('Cache-Control', 'no-store');
   res.contentType('text/plain');
@@ -257,6 +261,7 @@ app.use((err, req, res, next) => {
   if (app.get('env') === 'development') {
     console.error(err);
   }
+  stats.error();
   res.setHeader('Cache-Control', 'no-store');
   res.status(500);
   res.contentType('text/plain');
