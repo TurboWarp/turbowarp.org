@@ -1,9 +1,13 @@
-Backend logic for turbowarp.org
+Backend logic for turbowarp.org and some of its subdomains
 
-It's really just a complicated static file server with some extra features:
+It's really just a static file server with some extras:
 
- - /1234 loads index.html, /1234/editor loads editor.html, etc.
- - Cache-Control handling
- - Negotiates pre-compressed encodings (brotli, gzip)
- - Parses Host to have multiple roots on the same server
- - Probably no major security exploits
+ - Wildcard routing aliases: /1234 loads index.html, /1234/editor loads editor.html, etc.
+ - Sets proper Cache-Control for certain routes used by TurboWarp to greatly improve performance
+ - Negotiates pre-compressed encodings -- brotli reduces our 11MB JavaScript bundle to under 2MB, but brotli is very slow, so we do it at build time instead of dynamically. gzip is also supported.
+ - Parses Host to have multiple roots on the same instance.
+ - Probably no major security exploits.
+
+Known file types can be configured in types.js
+
+Hosts and their roots can be configured in hosts.js. branches controls whether this root uses branches (like https://experiments.turbowarp.org/interpolated-60/).
