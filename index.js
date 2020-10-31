@@ -245,6 +245,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 
 app.use((req, res) => {
   res.status(404);
+  res.setHeader('Cache-Control', 'no-store');
   res.contentType('text/plain');
   res.send('404 Not Found');
 });
@@ -254,6 +255,7 @@ app.use((err, req, res, next) => {
   if (app.get('env') === 'development') {
     console.error(err);
   }
+  res.setHeader('Cache-Control', 'no-store');
   res.status(500);
   res.contentType('text/plain');
   res.send('Internal server error');
