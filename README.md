@@ -11,3 +11,5 @@ It's really just a static file server with some extras:
 Known file types can be configured in types.js
 
 Hosts and their roots can be configured in hosts.js. branches controls whether this root uses branches (like https://experiments.turbowarp.org/interpolated-60/).
+
+The code here is very purpose built for turbowarp.org and isn't easily extensible. I would not recommend using it.
