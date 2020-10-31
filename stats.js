@@ -26,7 +26,7 @@ const print = () => {
     const previousCount = counter.previousCount;
     counter.previousCount = counter.count;
     const delta = count - previousCount;
-    console.log(`${name}\tdelta: ${delta}\ttotal: ${previousCount}`);
+    console.log(`${name}\tdelta: ${delta}\ttotal: ${count}`);
   }
 };
 
