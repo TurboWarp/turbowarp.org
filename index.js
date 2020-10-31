@@ -25,6 +25,8 @@ console.log(`Known file types: ${Object.keys(fileTypes).join(', ')}`)
 
 const app = express();
 app.set('x-powered-by', false);
+// we handle ETag ourselves
+app.set('etag', false);
 app.set('case sensitive routing', false);
 app.set('strict routing', false);
 
