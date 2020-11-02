@@ -1,4 +1,4 @@
-const INTERVAL = 1000 * 60 * 60;
+const INTERVAL = 1000;
 
 const counters = [];
 
@@ -13,7 +13,7 @@ const makeCounter = (name) => {
   return fn;
 };
 
-const servedFile = makeCounter('Files');
+const servedFile = makeCounter('Serve File');
 const fileNotFound = makeCounter('404');
 const error = makeCounter('Error');
 
@@ -22,11 +22,15 @@ const print = () => {
 
   for (const counter of counters) {
     const name = counter._name;
-    const count = counter.count;
+    const total = counter.count;
     const previousCount = counter.previousCount;
+    const delta = total - previousCount;
     counter.previousCount = counter.count;
-    const delta = count - previousCount;
-    console.log(`${name}\tdelta: ${delta}\ttotal: ${count}`);
+
+    const nameText = name.padEnd(16);
+    const deltaText = `delta: ${delta}`.padEnd(16);
+    const totalText = `total: ${total}`.padEnd(16);
+    console.log(`${nameText}${deltaText}${totalText}`);
   }
 };
 
