@@ -34,7 +34,9 @@ const print = () => {
   }
 };
 
-setInterval(print, INTERVAL);
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(print, INTERVAL);
+}
 
 module.exports = {
   servedFile,
