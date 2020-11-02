@@ -1,4 +1,4 @@
-const INTERVAL = 1000;
+const INTERVAL = 1000 * 60 * 60;
 
 const counters = [];
 
