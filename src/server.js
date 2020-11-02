@@ -254,7 +254,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 app.use((req, res) => {
   stats.fileNotFound();
   res.status(404);
-  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Cache-Control', 'no-cache');
   res.contentType('text/plain');
   res.send('404 Not Found');
 });
