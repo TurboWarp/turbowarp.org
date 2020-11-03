@@ -36,7 +36,14 @@ it('redirects directories', async () => {
 });
 
 it('is not vulnerable to path traversal', async () => {
-  return request.get('/../test/path-traversal.html')
-    .set('Host', 'localhost')
-    .expect(404);
+  return Promise.all([
+    request.get('/../www2/test.html')
+      .set('Host', 'localhost')
+      .expect(404),
+    // we're not trying to read /etc/passwd for any malicious reason
+    // we're just using a very common unix file to see if path traversal works (we hope it doesn't)
+    request.get('/../../../../../../../../../../../../etc/passwd')
+      .set('Host', 'localhost')
+      .expect(404)
+  ]);
 });
