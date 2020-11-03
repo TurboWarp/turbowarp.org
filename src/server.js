@@ -9,6 +9,7 @@ const statFile = promisify(fs.stat);
 const fileTypes = require('./types');
 const hosts = require('./hosts');
 const stats = require('./stats');
+const logger = require('./logger');
 
 // We need to make sure that all the roots have a trailing / to ensure that the path traversal prevention works properly.
 // Otherwise a root of "/var/www" would allow someone to read files in /var/www-top-secret-do-not-read
@@ -23,8 +24,8 @@ for (const fileTypeName of Object.keys(fileTypes)) {
 }
 
 if (process.env.NODE_ENV !== 'test') {
-  console.log(`Known hosts: ${Object.keys(hosts).join(', ')}`)
-  console.log(`Known file types: ${Object.keys(fileTypes).join(', ')}`)
+  logger.info(`Known hosts: ${Object.keys(hosts).join(', ')}`)
+  logger.info(`Known file types: ${Object.keys(fileTypes).join(', ')}`)
 }
 
 const app = express();
@@ -260,10 +261,7 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  // Do not log errors in production, as it may be possible for someone to abuse console.error's sync behaviors to DoS
-  if (app.get('env') === 'development') {
-    console.error(err);
-  }
+  logger.error(err);
   stats.error();
   res.setHeader('Cache-Control', 'no-store');
   res.status(500);
