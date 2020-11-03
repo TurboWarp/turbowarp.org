@@ -1,5 +1,14 @@
 const path = require('path');
 
+if (process.env.NODE_ENV !== 'test') {
+  try {
+    const hosts = require('../hosts.js');
+    module.exports = hosts;
+  } catch (e) {
+    // ignore
+  }  
+}
+
 module.exports = {
   'localhost': {
     root: path.resolve('www'),
