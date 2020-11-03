@@ -1,8 +1,12 @@
 const path = require('path');
 
+let applyDefaults = true;
+
 if (process.env.NODE_ENV !== 'test') {
   try {
+    // require() will throw if file does not exist, syntax error, etc.
     const hosts = require('../hosts.js');
+    applyDefaults = false;
     module.exports = hosts;
   } catch (e) {
     if (e && typeof e === 'object' && e.code !== 'MODULE_NOT_FOUND') {
@@ -13,13 +17,15 @@ if (process.env.NODE_ENV !== 'test') {
   }
 }
 
-module.exports = {
-  'localhost': {
-    root: path.resolve('www'),
-    branches: false
-  },
-  'example.com': {
-    root: path.resolve('www2'),
-    branches: true
-  }
-};
+if (applyDefaults) {
+  module.exports = {
+    'localhost': {
+      root: path.resolve('www'),
+      branches: false
+    },
+    'example.com': {
+      root: path.resolve('www2'),
+      branches: true
+    }
+  };
+}
