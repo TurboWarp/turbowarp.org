@@ -1,3 +1,5 @@
+const logger = require('./logger');
+
 const INTERVAL = 1000 * 60 * 60;
 
 const counters = [];
@@ -18,7 +20,7 @@ const fileNotFound = makeCounter('404');
 const error = makeCounter('Error');
 
 const print = () => {
-  console.log(`*** ${new Date().toUTCString()} ***`);
+  logger.info(`*** ${new Date().toUTCString()} ***`);
 
   for (const counter of counters) {
     const name = counter._name;
@@ -30,7 +32,7 @@ const print = () => {
     const nameText = name.padEnd(16);
     const deltaText = `delta: ${delta}`.padEnd(16);
     const totalText = `total: ${total}`.padEnd(16);
-    console.log(`${nameText}${deltaText}${totalText}`);
+    logger.info(`${nameText}${deltaText}${totalText}`);
   }
 };
 
