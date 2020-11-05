@@ -1,31 +1,41 @@
 const path = require('path');
 
-let applyDefaults = true;
-
-if (process.env.NODE_ENV !== 'test') {
+const readPrivateHosts = () => {
   try {
     // require() will throw if file does not exist, syntax error, etc.
     const hosts = require('../hosts.js');
-    applyDefaults = false;
-    module.exports = hosts;
+    if (hosts) {
+      return hosts;
+    }
   } catch (e) {
+    // If there was an error that wasn't caused by the file not existing, stop the process.
     if (e && typeof e === 'object' && e.code !== 'MODULE_NOT_FOUND') {
       console.error('could not read private hosts file');
       console.error(e);
       process.exit(1);
     }
   }
-}
+  return null;
+};
 
-if (applyDefaults) {
+if (process.env.NODE_ENV === 'test') {
   module.exports = {
     'localhost': {
-      root: path.resolve('www'),
+      root: path.join(__dirname, '../test/localhost'),
       branches: false
     },
-    'example.com': {
-      root: path.resolve('www2'),
+    'notlocalhost': {
+      root: path.join(__dirname, '../test/notlocalhost'),
       branches: true
     }
   };
+} else {
+  const privateHosts = readPrivateHosts();
+  const defaultHosts = {
+    'localhost': {
+      root: path.resolve('www'),
+      branches: false
+    }
+  };
+  module.exports = privateHosts || defaultHosts;
 }

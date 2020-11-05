@@ -8,9 +8,9 @@ it('serves static files from localhost', async () => {
     .expect(200);
 });
 
-it('serves static files from example.com', async () => {
+it('serves static files from notlocalhost', async () => {
   return request.get('/test.html')
-    .set('Host', 'example.com')
+    .set('Host', 'notlocalhost')
     .expect(200);
 });
 

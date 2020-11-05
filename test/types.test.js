@@ -9,7 +9,7 @@ it('serves html with the proper Content-Type', async () => {
 });
 
 it('serves js with the proper Content-Type', async () => {
-  return request.get('/test.js')
+  return request.get('/file.js')
     .set('Host', 'localhost')
     .expect('Content-Type', 'text/javascript');
 });

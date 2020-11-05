@@ -10,15 +10,15 @@ it('html served with no file encoding', async () => {
 });
 
 it('js served with no accepted encodings', async () => {
-  return request.get('/test.js')
+  return request.get('/file.js')
     .set('Host', 'localhost')
     .set('Accept-Encoding', '')
     .expect('Vary', 'Accept-Encoding')
-    .expect('test.js (no encoding)');
+    .expect('file.js (no encoding)');
 });
 
 it('js served with gzip', async () => {
-  return request.get('/test.js')
+  return request.get('/file.js')
     .set('Host', 'localhost')
     .set('Accept-Encoding', 'gzip')
     .expect('Vary', 'Accept-Encoding')
@@ -26,7 +26,7 @@ it('js served with gzip', async () => {
 });
 
 it('js served with br', async () => {
-  return request.get('/test.js')
+  return request.get('/file.js')
     .set('Host', 'localhost')
     .set('Accept-Encoding', 'br')
     .expect('Vary', 'Accept-Encoding')
@@ -34,7 +34,7 @@ it('js served with br', async () => {
 });
 
 it('js prefers br over gzip', async () => {
-  return request.get('/test.js')
+  return request.get('/file.js')
     .set('Host', 'localhost')
     .set('Accept-Encoding', 'gzip, br')
     .expect('Vary', 'Accept-Encoding')

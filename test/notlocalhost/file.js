@@ -1,0 +1,1 @@
+file.js (no encoding)

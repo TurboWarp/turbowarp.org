@@ -17,7 +17,7 @@ it('serves JS with long-term caching', async () => {
 
 it('serves JS with long-term caching in branches', async () => {
   return request.get('/test-branch/js/long-term-cached.js')
-    .set('Host', 'example.com')
+    .set('Host', 'notlocalhost')
     .expect('Cache-Control', /immutable/)
     .expect('test-branch long-term-cached.js (no encoding)');
 });
