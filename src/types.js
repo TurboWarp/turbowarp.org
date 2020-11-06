@@ -43,4 +43,10 @@ module.exports = {
   '.mp3': {
     type: 'audio/mpeg',
   },
+  '.wav': {
+    type: 'audio/wav'
+  },
+  '.ogg': {
+    type: 'audio/ogg'
+  }
 };
