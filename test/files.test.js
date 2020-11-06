@@ -37,7 +37,7 @@ it('redirects directories', () => {
 
 it('is not vulnerable to path traversal', () => {
   return Promise.all([
-    request.get('/../www2/test.html')
+    request.get('/../notlocalhost/test.html')
       .set('Host', 'localhost')
       .expect(404),
     // we're not trying to read /etc/passwd for any malicious reason
