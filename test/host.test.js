@@ -19,3 +19,8 @@ it('returns 400 if invalid host', async () => {
     .set('Host', 'lskdfksldfjlksdfjlksdflskdf.com')
     .expect(400);
 });
+
+it('returns 400 if no host', async () => {
+  return request.get('/')
+    .expect(400);
+});
