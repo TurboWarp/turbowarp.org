@@ -2,40 +2,40 @@ const supertest = require('supertest');
 const app = require('../src/server');
 const request = supertest(app);
 
-it('serves static files', async () => {
+it('serves static files', () => {
   return request.get('/index.html')
     .set('Host', 'localhost')
     .expect(200)
     .expect('index.html (no encoding)');
 });
 
-it('serves index file for root', async () => {
+it('serves index file for root', () => {
   return request.get('/')
     .set('Host', 'localhost')
     .expect(200)
     .expect('index.html (no encoding)');
 });
 
-it('serves index file for directory', async () => {
+it('serves index file for directory', () => {
   return request.get('/directory/')
     .set('Host', 'localhost')
     .expect(200)
     .expect('index.html in directory (no encoding)');
 });
 
-it('returns 404 for not found', async () => {
+it('returns 404 for not found', () => {
   return request.get('/sdflkjsdgfljksdrgojlikgrdjokigsdjk')
     .set('Host', 'localhost')
     .expect(404);
 });
 
-it('redirects directories', async () => {
+it('redirects directories', () => {
   return request.get('/directory')
     .set('Host', 'localhost')
     .expect('Location', '/directory/');
 });
 
-it('is not vulnerable to path traversal', async () => {
+it('is not vulnerable to path traversal', () => {
   return Promise.all([
     request.get('/../www2/test.html')
       .set('Host', 'localhost')

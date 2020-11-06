@@ -2,14 +2,14 @@ const supertest = require('supertest');
 const app = require('../src/server');
 const request = supertest(app);
 
-it('html served with no file encoding', async () => {
+it('html served with no file encoding', () => {
   return request.get('/index.html')
     .set('Host', 'localhost')
     .set('Accept-Encoding', '')
     .expect('index.html (no encoding)')
 });
 
-it('js served with no accepted encodings', async () => {
+it('js served with no accepted encodings', () => {
   return request.get('/file.js')
     .set('Host', 'localhost')
     .set('Accept-Encoding', '')
@@ -17,7 +17,7 @@ it('js served with no accepted encodings', async () => {
     .expect('file.js (no encoding)');
 });
 
-it('js served with gzip', async () => {
+it('js served with gzip', () => {
   return request.get('/file.js')
     .set('Host', 'localhost')
     .set('Accept-Encoding', 'gzip')
@@ -25,7 +25,7 @@ it('js served with gzip', async () => {
     .expect('Content-Encoding', 'gzip');
 });
 
-it('js served with br', async () => {
+it('js served with br', () => {
   return request.get('/file.js')
     .set('Host', 'localhost')
     .set('Accept-Encoding', 'br')
@@ -33,7 +33,7 @@ it('js served with br', async () => {
     .expect('Content-Encoding', 'br');
 });
 
-it('js prefers br over gzip', async () => {
+it('js prefers br over gzip', () => {
   return request.get('/file.js')
     .set('Host', 'localhost')
     .set('Accept-Encoding', 'gzip, br')
