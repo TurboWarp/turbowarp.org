@@ -2,11 +2,11 @@ const supertest = require('supertest');
 const app = require('../src/server');
 const request = supertest(app);
 
-it('html served with no file encoding', () => {
-  return request.get('/index.html')
+it('txt served with no file encoding', () => {
+  return request.get('/test.txt')
     .set('Host', 'localhost')
     .set('Accept-Encoding', '')
-    .expect('index.html (no encoding)')
+    .expect('test.txt (no encoding)')
 });
 
 it('js served with no accepted encodings', () => {
