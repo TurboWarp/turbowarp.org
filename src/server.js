@@ -113,6 +113,8 @@ const handleWildcardRedirects = (branchRelativePath) => {
     return '/editor.html';
   } else if (/^\/(?:\d+\/)?fullscreen\/?$/i.test(branchRelativePath)) {
     return '/fullscreen.html';
+  } else if (/^\/(?:\d+\/)?embed\/?$/i.test(branchRelativePath)) {
+    return '/embed.html';
   }
   return null;
 };
