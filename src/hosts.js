@@ -26,7 +26,8 @@ if (process.env.NODE_ENV === 'test') {
     },
     'notlocalhost': {
       root: path.join(__dirname, '../test/notlocalhost'),
-      branches: true
+      branches: true,
+      redirect: {'old': 'new'}
     }
   };
 } else {
