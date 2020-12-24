@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const url = require('url');
 const promisify = require('util').promisify;
 const etag = require('etag');
 const asyncHandler = require('express-async-handler');
@@ -16,6 +17,7 @@ const logger = require('./logger');
 for (const hostname of Object.keys(hosts)) {
   const host = hosts[hostname];
   host.root = path.join(host.root, '/');
+  host.redirect = host.redirect || {};
 }
 // Set optional properties
 for (const fileTypeName of Object.keys(fileTypes)) {
@@ -133,11 +135,16 @@ app.use((req, res, next) => {
   const path = req.path;
 
   if (branches) {
-    const branchMatch = path.match(/^\/([\w\d_-]+)\//);
+    const branchMatch = path.match(/^\/([\w\d_-]+)\/?/);
     if (branchMatch) {
       const branchName = branchMatch[1];
       const prefix = `/${branchName}`;
       const branchRelativePath = path.substring(prefix.length);
+      if (host.redirect.hasOwnProperty(branchName)) {
+        const search = url.parse(req.url).search || '';
+        res.redirect(`/${host.redirect[branchName]}${branchRelativePath}${search}`);
+        return;
+      }
       const redirectPath = handleWildcardRedirects(branchRelativePath);
       if (redirectPath !== null) {
         req.logicalPath = `${prefix}${redirectPath}`;
