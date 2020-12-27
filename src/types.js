@@ -21,6 +21,9 @@ module.exports = {
   '.map': {
     type: 'application/json'
   },
+  '.webmanifest': {
+    type: 'application/json'
+  },
   '.svg': {
     type: 'image/svg+xml',
     encodings: [br, gz]
