@@ -181,7 +181,7 @@ app.get('*/static/blocks-media/*', (req, res, next) => {
 app.get('/*', asyncHandler(async (req, res, next) => {
   const pathName = req.logicalPath || req.path;
 
-  if (/[^a-zA-Z0-9.\-\/~]/.test(pathName)) {
+  if (/[^a-zA-Z0-9.\-_\/~]/.test(pathName)) {
     next();
     return;
   }
