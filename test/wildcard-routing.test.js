@@ -168,3 +168,10 @@ it('serves embed with trailing slash in branch', () => {
     .expect(200)
     .expect('addons.html (test-branch)');
 });
+
+it('when wildcard route file does not exist, return 404', () => {
+  return request.get('/new/addons/')
+    .set('Host', 'notlocalhost')
+    .set('Accept-Encoding', '')
+    .expect(404)
+});
