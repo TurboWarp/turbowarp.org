@@ -117,6 +117,8 @@ const handleWildcardRedirects = (branchRelativePath) => {
     return '/fullscreen.html';
   } else if (/^\/(?:\d+\/)?embed\/?$/i.test(branchRelativePath)) {
     return '/embed.html';
+  } else if (/^\/addons\/?$/i.test(branchRelativePath)) {
+    return '/addons.html';
   }
   return null;
 };

@@ -66,6 +66,29 @@ it('serves fullscreen with trailing slash', () => {
     .expect('fullscreen.html (no encoding)');
 });
 
+it('serves addons without trailing slash', () => {
+  return request.get('/addons')
+    .set('Host', 'localhost')
+    .set('Accept-Encoding', '')
+    .expect(200)
+    .expect('addons.html');
+});
+
+it('serves addons with trailing slash', () => {
+  return request.get('/addons/')
+    .set('Host', 'localhost')
+    .set('Accept-Encoding', '')
+    .expect(200)
+    .expect('addons.html');
+});
+
+it('does not serve addons with ID', () => {
+  return request.get('/1234/addons/')
+    .set('Host', 'localhost')
+    .set('Accept-Encoding', '')
+    .expect(404)
+});
+
 it('serves project page without trailing slash in branch', () => {
   return request.get('/test-branch/1234')
     .set('Host', 'notlocalhost')
@@ -128,4 +151,20 @@ it('serves embed with trailing slash in branch', () => {
     .set('Accept-Encoding', '')
     .expect(200)
     .expect('test-branch embed.html (no encoding)');
+});
+
+it('serves embed without trailing slash in branch', () => {
+  return request.get('/test-branch/addons')
+    .set('Host', 'notlocalhost')
+    .set('Accept-Encoding', '')
+    .expect(200)
+    .expect('addons.html (test-branch)');
+});
+
+it('serves embed with trailing slash in branch', () => {
+  return request.get('/test-branch/addons/')
+    .set('Host', 'notlocalhost')
+    .set('Accept-Encoding', '')
+    .expect(200)
+    .expect('addons.html (test-branch)');
 });
