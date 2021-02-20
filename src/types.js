@@ -19,7 +19,8 @@ module.exports = {
     type: 'text/plain'
   },
   '.map': {
-    type: 'application/json'
+    type: 'application/json',
+    encodings: [gz]
   },
   '.webmanifest': {
     type: 'application/json'
