@@ -145,7 +145,7 @@ app.use((req, res, next) => {
 
       if (branchName === 'interpolated-60' || branchName === 'interpolation') {
         const oldSearch = url.parse(req.url).search;
-        let newSearch = oldSearch ? oldSearch + '&interpolate' : '?interpolate';
+        const newSearch = oldSearch ? oldSearch + '&interpolate' : '?interpolate';
         res.redirect(`https://turbowarp.org${branchRelativePath}${newSearch}`);
         return;
       }
