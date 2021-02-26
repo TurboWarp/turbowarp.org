@@ -153,7 +153,7 @@ it('serves embed with trailing slash in branch', () => {
     .expect('test-branch embed.html (no encoding)');
 });
 
-it('serves embed without trailing slash in branch', () => {
+it('serves addons without trailing slash in branch', () => {
   return request.get('/test-branch/addons')
     .set('Host', 'notlocalhost')
     .set('Accept-Encoding', '')
@@ -161,7 +161,7 @@ it('serves embed without trailing slash in branch', () => {
     .expect('addons.html (test-branch)');
 });
 
-it('serves embed with trailing slash in branch', () => {
+it('serves addons with trailing slash in branch', () => {
   return request.get('/test-branch/addons/')
     .set('Host', 'notlocalhost')
     .set('Accept-Encoding', '')
