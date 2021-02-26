@@ -2,20 +2,6 @@ const logger = require('./logger');
 
 const INTERVAL = 1000 * 5;
 
-class Paths {
-  constructor () {
-    this.map = new Map();
-  }
-
-  increment(path) {
-    if (this.map.has(path)) {
-      this.map.set(path, this.map.get(path) + 1);
-    } else if (this.map.size < 1000) {
-      this.map.set(path, 1);
-    }
-  }
-}
-
 const createRequestData = () => ({
   total: 0,
   notFound: 0,
@@ -40,35 +26,41 @@ const createOSData = () => ({
   none: 0
 });
 
+const createPathsData = () => new Map();
+
+const createUniquesData = () => new Set();
+
 let requests = createRequestData();
 let browser = createBrowserData();
 let os = createOSData();
-let paths = new Paths();
-
+let paths = createPathsData();
+let uniques = createUniquesData();
 const reset = () => {
   requests = createRequestData();
   browser = createBrowserData();
   os = createOSData();
-  paths = new Paths();
+  paths = createPathsData();
+  uniques = createUniquesData();
 };
 
 const getData = () => ({
   requests,
   browser,
   os,
-  paths
+  paths,
+  uniques
 });
 
 const print = () => {
   logger.info(`*** ${new Date().toUTCString()} ***`);
 
-  logger.info('--- Requests ---');
   logger.info(`Requests: ${requests.total}`);
   logger.info(`     404: ${requests.notFound}`);
+  logger.info(` Uniques: ${uniques.size}`);
 
   logger.info('--- Paths ---');
   // TODO: this is going to be quite verbose
-  for (const [path, hits] of paths.map.entries()) {
+  for (const [path, hits] of paths.entries()) {
     logger.info(`${path} - ${hits}`);
   }
 
@@ -101,6 +93,9 @@ const handleRequest = (req) => {
   if (dnt === '1') {
     return;
   }
+
+  const ip = req.ip;
+  uniques.add(ip);
 
   const userAgent = req.headers['user-agent'];
   if (typeof userAgent === 'string') {
@@ -137,7 +132,12 @@ const handleRequest = (req) => {
 
 const handleServedFile = (path) => {
   requests.total++;
-  paths.increment(path);
+
+  if (paths.has(path)) {
+    paths.set(path, paths.get(path) + 1);
+  } else {
+    paths.set(path, 1);
+  }
 };
 
 const handleNotFound = (path) => {

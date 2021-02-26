@@ -12,6 +12,13 @@ const mockRequestWithHeaders = headers => {
   });
 };
 
+const mockRequestWithAddress = address => {
+  stats.handleRequest({
+    headers: {},
+    ip: address
+  });
+};
+
 const mockRequestsWithAgents = agents => agents.forEach((agent) => {
   stats.handleRequest({
     headers: {
@@ -137,10 +144,21 @@ test('404', () => {
 
 test('paths', () => {
   stats.handleServedFile('/');
-  expect(stats.getData().paths.map.get('/')).toBe(1);
+  expect(stats.getData().paths.get('/')).toBe(1);
   stats.handleServedFile('/');
   stats.handleServedFile('/embed');
   stats.handleServedFile('/');
-  expect(stats.getData().paths.map.get('/')).toBe(3);
-  expect(stats.getData().paths.map.get('/embed')).toBe(1);
+  expect(stats.getData().paths.get('/')).toBe(3);
+  expect(stats.getData().paths.get('/embed')).toBe(1);
+});
+
+test('uniques', () => {
+  mockRequestWithAddress('123.123.123.123');
+  expect(stats.getData().uniques.size).toBe(1);
+  mockRequestWithAddress('123.123.123.123');
+  mockRequestWithAddress('123.123.123.123');
+  mockRequestWithAddress('123.123.123.123');
+  expect(stats.getData().uniques.size).toBe(1);
+  mockRequestWithAddress('123.123.123.124');
+  expect(stats.getData().uniques.size).toBe(2);
 });
