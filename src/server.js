@@ -164,6 +164,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  stats.handleRequest(req);
+  next();
+});
+
 app.get('/desktop', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/download', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/packager', (req, res) => res.redirect('https://packager.turbowarp.org/'));
@@ -256,7 +261,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       res.setHeader('Cache-Control', 'no-cache');
     }
 
-    stats.servedFile();
+    stats.handleServedFile(req.path);
 
     stream.pipe(res);
   });
@@ -268,7 +273,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 }));
 
 app.use((req, res) => {
-  stats.fileNotFound();
+  stats.handleNotFound(req.path);
   res.status(404);
   res.setHeader('Cache-Control', 'no-cache');
   res.contentType('text/plain');
@@ -277,7 +282,6 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   logger.error(err);
-  stats.error();
   res.setHeader('Cache-Control', 'no-store');
   res.status(500);
   res.contentType('text/plain');
