@@ -17,7 +17,6 @@ const logger = require('./logger');
 for (const hostname of Object.keys(hosts)) {
   const host = hosts[hostname];
   host.root = path.join(host.root, '/');
-  host.redirect = host.redirect || {};
 }
 // Set optional properties
 for (const fileTypeName of Object.keys(fileTypes)) {
@@ -142,11 +141,14 @@ app.use((req, res, next) => {
       const branchName = branchMatch[1];
       const prefix = `/${branchName}`;
       const branchRelativePath = path.substring(prefix.length);
-      if (host.redirect.hasOwnProperty(branchName)) {
-        const search = url.parse(req.url).search || '';
-        res.redirect(`/${host.redirect[branchName]}${branchRelativePath}${search}`);
+
+      if (branchName === 'interpolated-60' || branchName === 'interpolation') {
+        const oldSearch = url.parse(req.url).search;
+        let newSearch = oldSearch ? oldSearch + '&interpolate' : '?interpolate';
+        res.redirect(`https://turbowarp.org${branchRelativePath}${newSearch}`);
         return;
       }
+
       const redirectPath = handleWildcardRedirects(branchRelativePath);
       if (redirectPath !== null) {
         req.logicalPath = `${prefix}${redirectPath}`;
