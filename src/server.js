@@ -164,6 +164,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/desktop', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
+app.get('/download', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
+app.get('/packager', (req, res) => res.redirect('https://packager.turbowarp.org/'));
+
 app.get('*/js/*', (req, res, next) => {
   // File names contain hash of content, can cache forever.
   res.header('Cache-Control', 'public, max-age=315360000, immutable');
