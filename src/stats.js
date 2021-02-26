@@ -1,7 +1,7 @@
 const logger = require('./logger');
 const environment = require('./environment');
 
-const INTERVAL = 1000 * 5;
+const INTERVAL = 1000 * 60 * 60;
 
 const createRequestData = () => ({
   total: 0,
