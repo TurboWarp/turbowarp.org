@@ -283,7 +283,8 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  logger.error(err);
+  const message = err && err.stack || err;
+  logger.error(message);
   res.setHeader('Cache-Control', 'no-store');
   res.status(500);
   res.contentType('text/plain');
