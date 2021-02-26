@@ -1,4 +1,5 @@
 const logger = require('./logger');
+const environment = require('./environment');
 
 const INTERVAL = 1000 * 5;
 
@@ -84,7 +85,7 @@ const print = () => {
   reset();
 };
 
-if (process.env.NODE_ENV !== 'test') {
+if (!environment.isTest) {
   setInterval(print, INTERVAL);
 }
 

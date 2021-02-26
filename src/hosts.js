@@ -1,4 +1,5 @@
 const path = require('path');
+const environment = require('./environment');
 
 const readPrivateHosts = () => {
   try {
@@ -18,7 +19,7 @@ const readPrivateHosts = () => {
   return null;
 };
 
-if (process.env.NODE_ENV === 'test') {
+if (environment.isTest) {
   module.exports = {
     'localhost': {
       root: path.join(__dirname, '../test/localhost'),

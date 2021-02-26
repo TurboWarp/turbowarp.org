@@ -11,6 +11,7 @@ const fileTypes = require('./types');
 const hosts = require('./hosts');
 const stats = require('./stats');
 const logger = require('./logger');
+const environment = require('./environment');
 
 // We need to make sure that all the roots have a trailing / to ensure that the path traversal prevention works properly.
 // Otherwise a root of "/var/www" would allow someone to read files in /var/www-top-secret-do-not-read
@@ -24,7 +25,7 @@ for (const fileTypeName of Object.keys(fileTypes)) {
   if (!fileType.encodings) fileType.encodings = [];
 }
 
-if (process.env.NODE_ENV !== 'test') {
+if (!environment.isTest) {
   logger.info(`Known hosts: ${Object.keys(hosts).join(', ')}`)
   logger.info(`Known file types: ${Object.keys(fileTypes).join(', ')}`)
 }
