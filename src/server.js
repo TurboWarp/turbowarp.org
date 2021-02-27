@@ -36,6 +36,7 @@ app.set('x-powered-by', false);
 app.set('etag', false);
 app.set('case sensitive routing', false);
 app.set('strict routing', false);
+app.set('trust proxy', true);
 
 const safeJoin = (root, file) => {
   const newPath = path.join(root, file);
