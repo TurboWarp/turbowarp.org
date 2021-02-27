@@ -60,7 +60,7 @@ const print = () => {
   logger.info(` Uniques: ${uniques.size}`);
 
   logger.info('--- Paths ---');
-  const entries = Array.from(paths.entries()).sort((a, b) => a[1] - b[1]);
+  const entries = Array.from(paths.entries()).sort((a, b) => b[1] - a[1]);
   for (const [path, hits] of entries) {
     logger.info(`${path} - ${hits}`);
   }
