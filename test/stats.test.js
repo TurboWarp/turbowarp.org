@@ -143,13 +143,10 @@ test('404', () => {
 });
 
 test('paths', () => {
-  stats.handleServedFile('/');
-  expect(stats.getData().paths.get('/')).toBe(1);
-  stats.handleServedFile('/');
-  stats.handleServedFile('/embed');
-  stats.handleServedFile('/');
-  expect(stats.getData().paths.get('/')).toBe(3);
-  expect(stats.getData().paths.get('/embed')).toBe(1);
+  stats.handleServedFile('/index.html');
+  expect(stats.getData().paths.get('/index.html')).toBe(1);
+  stats.handleServedFile('/index.html');
+  expect(stats.getData().paths.get('/index.html')).toBe(2);
 });
 
 test('uniques', () => {
