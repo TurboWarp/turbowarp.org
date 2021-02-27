@@ -264,7 +264,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       res.setHeader('Cache-Control', 'no-cache');
     }
 
-    stats.handleServedFile(req.path);
+    stats.handleServedFile(pathName);
 
     stream.pipe(res);
   });

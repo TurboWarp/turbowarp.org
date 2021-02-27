@@ -60,12 +60,12 @@ const print = () => {
   logger.info(` Uniques: ${uniques.size}`);
 
   logger.info('--- Paths ---');
-  // TODO: this is going to be quite verbose
-  for (const [path, hits] of paths.entries()) {
+  const entries = Array.from(paths.entries()).sort((a, b) => a[1] - b[1]);
+  for (const [path, hits] of entries) {
     logger.info(`${path} - ${hits}`);
   }
 
-  logger.info('--- OS ---');
+  logger.info('---    OS    ---');
   logger.info(` Windows: ${os.windows}`);
   logger.info(`   macOS: ${os.macos}`);
   logger.info(`   Linux: ${os.linux}`);
