@@ -10,6 +10,7 @@ const gz = {
 module.exports = {
   '.html': {
     type: 'text/html',
+    encodings: [gz]
   },
   '.js': {
     type: 'text/javascript',
