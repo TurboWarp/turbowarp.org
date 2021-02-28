@@ -10,7 +10,7 @@ const gz = {
 module.exports = {
   '.html': {
     type: 'text/html',
-    encodings: [gz]
+    encodings: [br, gz]
   },
   '.js': {
     type: 'text/javascript',
@@ -55,9 +55,11 @@ module.exports = {
     type: 'audio/ogg'
   },
   '.ttf': {
-    type: 'font/ttf'
+    type: 'font/ttf',
+    encodings: [br, gz]
   },
   '.otf': {
-    type: 'font/otf'
+    type: 'font/otf',
+    encodings: [br, gz]
   }
 };
