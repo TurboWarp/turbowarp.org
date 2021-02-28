@@ -43,10 +43,10 @@ module.exports = {
     type: 'image/x-icon'
   },
   '.cur': {
-    type: 'image/x-icon',
+    type: 'image/x-icon'
   },
   '.mp3': {
-    type: 'audio/mpeg',
+    type: 'audio/mpeg'
   },
   '.wav': {
     type: 'audio/wav'
