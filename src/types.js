@@ -53,5 +53,11 @@ module.exports = {
   },
   '.ogg': {
     type: 'audio/ogg'
+  },
+  '.ttf': {
+    type: 'font/ttf'
+  },
+  '.otf': {
+    type: 'font/otf'
   }
 };
