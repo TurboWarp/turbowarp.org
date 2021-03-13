@@ -127,6 +127,8 @@ const handleWildcardRedirects = (branchRelativePath) => {
 };
 
 app.use((req, res, next) => {
+  res.header('X-Content-Type-Options', 'nosniff');
+
   const hostname = req.hostname;
   if (!hosts.hasOwnProperty(hostname)) {
     res.status(400);
