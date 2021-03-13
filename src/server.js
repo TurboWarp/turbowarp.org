@@ -169,11 +169,8 @@ app.use((req, res, next) => {
 
   req.root = host.root;
 
-  next();
-});
-
-app.use((req, res, next) => {
   stats.handleRequest(req);
+
   next();
 });
 
