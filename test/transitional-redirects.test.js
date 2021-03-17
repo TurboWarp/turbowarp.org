@@ -26,3 +26,15 @@ it('interpolated-60: project id redirects preserving query', async () => {
     .expect(302);
   expect(req.headers['location']).toBe('https://turbowarp.org/1234/editor?fps=60&turbo&interpolate');
 });
+it('sounds-no-yield: index redirects', async () => {
+  const req = await request.get('/sounds-no-yield/')
+    .set('Host', 'notlocalhost')
+    .expect(302);
+  expect(req.headers['location']).toBe('https://experiments.turbowarp.org/no-limits/');
+});
+it('sounds-no-yield: project id redirects preserving query', async () => {
+  const req = await request.get('/sounds-no-yield/1234/editor?fps=60&turbo')
+    .set('Host', 'notlocalhost')
+    .expect(302);
+  expect(req.headers['location']).toBe('https://experiments.turbowarp.org/no-limits/1234/editor?fps=60&turbo');
+});

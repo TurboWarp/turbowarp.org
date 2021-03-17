@@ -155,6 +155,12 @@ app.use((req, res, next) => {
         return;
       }
 
+      if (branchName === 'sounds-no-yield') {
+        const search = url.parse(req.url).search;
+        res.redirect(`https://experiments.turbowarp.org/no-limits${branchRelativePath}${search || ''}`);
+        return;
+      }
+
       const redirectPath = handleWildcardRedirects(branchRelativePath);
       if (redirectPath !== null) {
         req.logicalPath = `${prefix}${redirectPath}`;
