@@ -128,6 +128,7 @@ const handleWildcardRedirects = (branchRelativePath) => {
 
 app.use((req, res, next) => {
   res.header('X-Content-Type-Options', 'nosniff');
+  res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   const hostname = req.hostname;
   if (!hosts.hasOwnProperty(hostname)) {
