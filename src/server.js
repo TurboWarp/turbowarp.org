@@ -142,6 +142,10 @@ app.use((req, res, next) => {
   const branches = host.branches;
   const path = req.path;
 
+  if (hostname === 'staging.turbowarp.org') {
+    res.header('Origin-Agent-Cluster', '?1');
+  }
+
   if (branches) {
     const branchMatch = path.match(/^\/([\w\d_-]+)\/?/);
     if (branchMatch) {
