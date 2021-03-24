@@ -4,6 +4,7 @@ const fs = require('fs');
 const url = require('url');
 const promisify = require('util').promisify;
 const etag = require('etag');
+const fresh = require('fresh');
 const asyncHandler = require('express-async-handler');
 const statFile = promisify(fs.stat);
 
@@ -204,6 +205,13 @@ app.get('*/static/blocks-media/*', (req, res, next) => {
   res.header('Cache-Control', 'public, max-age=3600, immutable');
   next();
 });
+app.get('*', (req, res, next) => {
+  // Ask browsers to revalidate all files that aren't explicitly cached
+  if (res.getHeader('Cache-Control') === undefined) {
+    res.setHeader('Cache-Control', 'no-cache');
+  }
+  next();
+});
 
 app.get('/*', asyncHandler(async (req, res, next) => {
   const pathName = req.logicalPath || req.path;
@@ -250,6 +258,21 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       contentEncoding = bestEncoding.name;
     }
   }
+  const varyAcceptEncoding = fileEncodings.length > 0;
+
+  const etagValue = etag(fileStat, {
+    weak: true
+  });
+  if (fresh(req.headers, {etag: etagValue})) {
+    res.status(304);
+    res.setHeader('ETag', etagValue);
+    if (varyAcceptEncoding) {
+      res.setHeader('Vary', 'Accept-Encoding');
+    }
+    stats.handleServedFile(pathName);
+    res.end();
+    return;
+  }
 
   const stream = fs.createReadStream(filePath);
 
@@ -261,22 +284,11 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     if (contentEncoding !== null) {
       res.setHeader('Content-Encoding', contentEncoding);
     }
-    // If there are multiple versions of this file, make sure that proxies won't send the wrong encoding to clients.
-    if (fileEncodings.length > 0) {
+    res.setHeader('ETag', etagValue);
+    if (varyAcceptEncoding) {
       res.setHeader('Vary', 'Accept-Encoding');
     }
-    const etagValue = etag(fileStat, {
-      weak: true
-    });
-    res.setHeader('ETag', etagValue);
-
-    // Force browsers to revalidate all files that aren't explicitly cached
-    if (res.getHeader('Cache-Control') === undefined) {
-      res.setHeader('Cache-Control', 'no-cache');
-    }
-
     stats.handleServedFile(pathName);
-
     stream.pipe(res);
   });
 
