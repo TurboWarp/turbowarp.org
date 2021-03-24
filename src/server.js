@@ -232,7 +232,6 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 
   let filePath = foundFile.path;
   let fileStat = foundFile.stat;
-  const fileLastModified = fileStat.mtime;
 
   const fileType = getFileType(filePath);
   if (fileType === null) {
@@ -259,7 +258,6 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     // Otherwise if we sent these earlier, we might send headers that don't make sense for eg. an error message
     res.setHeader('Content-Type', fileType.type);
     res.setHeader('Content-Length', fileStat.size);
-    res.setHeader('Last-Modified', fileLastModified.toUTCString());
     if (contentEncoding !== null) {
       res.setHeader('Content-Encoding', contentEncoding);
     }
