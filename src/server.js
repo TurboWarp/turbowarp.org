@@ -263,15 +263,17 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   const etagValue = etag(fileStat, {
     weak: true
   });
-  if (fresh(req.headers, {etag: etagValue})) {
-    res.status(304);
-    res.setHeader('ETag', etagValue);
-    if (varyAcceptEncoding) {
-      res.setHeader('Vary', 'Accept-Encoding');
+  if (pathName.includes('staging')) {
+    if (fresh(req.headers, {etag: etagValue})) {
+      res.status(304);
+      res.setHeader('ETag', etagValue);
+      if (varyAcceptEncoding) {
+        res.setHeader('Vary', 'Accept-Encoding');
+      }
+      stats.handleServedFile(pathName);
+      res.end();
+      return;
     }
-    stats.handleServedFile(pathName);
-    res.end();
-    return;
   }
 
   const stream = fs.createReadStream(filePath);
