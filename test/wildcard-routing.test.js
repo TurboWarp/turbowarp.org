@@ -50,22 +50,6 @@ it('serves embed with trailing slash', () => {
     .expect('embed.html (no encoding)');
 });
 
-it('serves embedgpl without trailing slash', () => {
-  return request.get('/1234/embedgpl')
-    .set('Host', 'localhost')
-    .set('Accept-Encoding', '')
-    .expect(200)
-    .expect('embedgpl.html (no encoding)');
-});
-
-it('serves embedgpl with trailing slash', () => {
-  return request.get('/1234/embedgpl/')
-    .set('Host', 'localhost')
-    .set('Accept-Encoding', '')
-    .expect(200)
-    .expect('embedgpl.html (no encoding)');
-});
-
 it('serves fullscreen without trailing slash', () => {
   return request.get('/1234/fullscreen')
     .set('Host', 'localhost')
@@ -167,22 +151,6 @@ it('serves embed with trailing slash in branch', () => {
     .set('Accept-Encoding', '')
     .expect(200)
     .expect('test-branch embed.html (no encoding)');
-});
-
-it('serves embedgpl without trailing slash in branch', () => {
-  return request.get('/test-branch/1234/embedgpl')
-    .set('Host', 'notlocalhost')
-    .set('Accept-Encoding', '')
-    .expect(200)
-    .expect('test-branch embedgpl.html (no encoding)');
-});
-
-it('serves embedgpl with trailing slash in branch', () => {
-  return request.get('/test-branch/1234/embedgpl/')
-    .set('Host', 'notlocalhost')
-    .set('Accept-Encoding', '')
-    .expect(200)
-    .expect('test-branch embedgpl.html (no encoding)');
 });
 
 it('serves addons without trailing slash in branch', () => {
