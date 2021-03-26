@@ -261,7 +261,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   const etagValue = etag(fileStat, {
     weak: true
   });
-  if (pathName.includes('staging')) {
+  if (filePath.includes('staging') || environment.isTest) {
     if (fresh(req.headers, {etag: etagValue})) {
       res.status(304);
       res.setHeader('ETag', etagValue);
