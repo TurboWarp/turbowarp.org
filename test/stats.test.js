@@ -121,15 +121,6 @@ test('none', () => {
   expect(stats.getData().browser.none).toBe(1);
 });
 
-test('do not track', () => {
-  mockRequestWithHeaders({
-    'dnt': '1',
-    'user-agent': 'Mozilla/5.0 (X11; CrOS x86_64 13421.53.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.77 Safari/537.36'
-  });
-  for (const v of Object.values(stats.getData().os)) expect(v).toBe(0);
-  for (const v of Object.values(stats.getData().browser)) expect(v).toBe(0);
-});
-
 test('total requests', () => {
   stats.handleServedFile('/');
   expect(stats.getData().requests.total).toBe(1);

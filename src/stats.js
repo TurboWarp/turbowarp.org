@@ -90,13 +90,10 @@ if (!environment.isTest) {
 }
 
 const handleRequest = (req) => {
-  const dnt = req.headers['dnt'];
-  if (dnt === '1') {
-    return;
+  if (req.headers['dnt'] !== '1') {
+    const ip = req.ip;
+    uniques.add(ip);
   }
-
-  const ip = req.ip;
-  uniques.add(ip);
 
   const userAgent = req.headers['user-agent'];
   if (typeof userAgent === 'string') {
