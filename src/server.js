@@ -19,6 +19,7 @@ const environment = require('./environment');
 for (const hostname of Object.keys(hosts)) {
   const host = hosts[hostname];
   host.root = path.join(host.root, '/');
+  host.staging = !!host.staging;
 }
 // Set optional properties
 for (const fileTypeName of Object.keys(fileTypes)) {
@@ -141,8 +142,9 @@ app.use((req, res, next) => {
   const branches = host.branches;
   const path = req.path;
 
-  if (hostname === 'staging.turbowarp.org') {
+  if (host.staging) {
     res.header('Origin-Agent-Cluster', '?1');
+    res.header('X-Robots-Tag', 'noindex');
   }
 
   if (branches) {
