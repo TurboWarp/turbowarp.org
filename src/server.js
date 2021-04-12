@@ -14,6 +14,8 @@ const stats = require('./stats');
 const logger = require('./logger');
 const environment = require('./environment');
 
+const notFoundFile = fs.readFileSync(path.join(__dirname, '404.html'));
+
 // We need to make sure that all the roots have a trailing / to ensure that the path traversal prevention works properly.
 // Otherwise a root of "/var/www" would allow someone to read files in /var/www-top-secret-do-not-read
 for (const hostname of Object.keys(hosts)) {
@@ -304,8 +306,8 @@ app.use((req, res) => {
   stats.handleNotFound(req.path);
   res.status(404);
   res.setHeader('Cache-Control', 'no-cache');
-  res.contentType('text/plain');
-  res.send('404 Not Found');
+  res.contentType('text/html');
+  res.send(notFoundFile);
 });
 
 app.use((err, req, res, next) => {
