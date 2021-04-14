@@ -163,9 +163,10 @@ app.use((req, res, next) => {
         return;
       }
 
-      if (branchName === 'sounds-no-yield') {
-        const search = url.parse(req.url).search;
-        res.redirect(`https://experiments.turbowarp.org/no-limits${branchRelativePath}${search || ''}`);
+      if (branchName === 'sounds-no-yield' || branchName === 'no-limits') {
+        const oldSearch = url.parse(req.url).search;
+        const newSearch = oldSearch ? oldSearch + '&limitless' : '?limitless';
+        res.redirect(`https://turbowarp.org${branchRelativePath}${newSearch}`);
         return;
       }
 
