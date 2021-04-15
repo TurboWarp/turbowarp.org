@@ -132,6 +132,7 @@ app.use((req, res, next) => {
   res.header('X-Content-Type-Options', 'nosniff');
   res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.header('Permissions-Policy', 'interest-cohort=()');
+  res.header('Origin-Agent-Cluster', '?1');
 
   const hostname = req.hostname;
   if (!hosts.hasOwnProperty(hostname)) {
@@ -146,7 +147,6 @@ app.use((req, res, next) => {
   const path = req.path;
 
   if (host.staging) {
-    res.header('Origin-Agent-Cluster', '?1');
     res.header('X-Robots-Tag', 'noindex');
   }
 
