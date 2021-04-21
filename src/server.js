@@ -21,7 +21,7 @@ const notFoundFile = fs.readFileSync(path.join(__dirname, '404.html'));
 for (const hostname of Object.keys(hosts)) {
   const host = hosts[hostname];
   host.root = path.join(host.root, '/');
-  host.staging = !!host.staging;
+  host.noindex = !!host.noindex;
 }
 // Set optional properties
 for (const fileTypeName of Object.keys(fileTypes)) {
@@ -146,7 +146,7 @@ app.use((req, res, next) => {
   const branches = host.branches;
   const path = req.path;
 
-  if (host.staging) {
+  if (host.noindex) {
     res.header('X-Robots-Tag', 'noindex');
   }
 
