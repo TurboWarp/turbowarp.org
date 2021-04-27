@@ -178,7 +178,7 @@ app.use((req, res, next) => {
     }
   } else {
     // Redirect /projects/123 to /123
-    const projectMatch = path.match(/^\/projects\/(\d+)\/?$/);
+    const projectMatch = path.match(/^\/(?:https:\/\/scratch\.mit\.edu\/)?projects\/(\d+)\/?$/);
     if (projectMatch) {
       const search = url.parse(req.url).search;
       res.redirect(`/${projectMatch[1]}${search || ''}`);
