@@ -177,6 +177,14 @@ app.use((req, res, next) => {
       }
     }
   } else {
+    // Redirect /projects/123 to /123
+    const projectMatch = path.match(/^\/projects\/(\d+)\/?$/);
+    if (projectMatch) {
+      const search = url.parse(req.url).search;
+      res.redirect(`/${projectMatch[1]}${search || ''}`);
+      return;
+    }
+
     const redirectPath = handleWildcardRedirects(path);
     if (redirectPath !== null) {
       req.logicalPath = redirectPath;

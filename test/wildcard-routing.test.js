@@ -175,3 +175,15 @@ it('when wildcard route file does not exist, return 404', () => {
     .set('Accept-Encoding', '')
     .expect(404)
 });
+
+it('redirects /projects/id to /id', () => {
+  return request.get('/projects/104')
+    .set('Host', 'localhost')
+    .expect('Location', '/104')
+});
+
+it('redirects /projects/id to /id with query', () => {
+  return request.get('/projects/104?test')
+    .set('Host', 'localhost')
+    .expect('Location', '/104?test')
+});
