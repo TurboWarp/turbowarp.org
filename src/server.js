@@ -281,7 +281,8 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 
   let contentEncoding = null;
   const fileEncodings = fileType.encodings;
-  if (fileEncodings.length > 0) {
+  // Due to terrible file response rewriting, don't use content encoding on OG requests
+  if (fileEncodings.length > 0 && !projectMeta) {
     const acceptedEncodings = req.acceptsEncodings();
     const bestEncoding = await chooseEncoding(acceptedEncodings, fileEncodings, filePath);
     if (bestEncoding !== null) {
@@ -323,12 +324,25 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   if (projectMeta) {
     const fileContents = await readFile(filePath, 'utf-8');
     sendFileHeaders();
+
+    let description;
+    if (projectMeta.instructions && projectMeta.description) {
+      description = `${projectMeta.instructions}\n${projectMeta.description}`;
+    } else if (projectMeta.instructions) {
+      description = projectMeta.instructions;
+    } else if (projectMeta.description) {
+      description = projectMeta.description;
+    } else {
+      description = '';
+    }
+
     const opengraph =
       '<meta property="og:type" content="website" />' +
       `<meta property="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp" />` +
       `<meta property="og:image" content="${escapeHTML(projectMeta.image)}" />` +
       `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}" />` +
-      `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}" />`;
+      `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}" />` +
+      `<meta property="og:description" content="${escapeHTML(description)}" />`;
     res.send(fileContents.replace('</head>', opengraph + '</head>'));
   } else {
     const stream = fs.createReadStream(filePath);

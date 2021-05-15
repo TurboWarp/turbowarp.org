@@ -7,8 +7,8 @@ it('returns opengraph to spider on index', async () => {
         .set('User-Agent', 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)')
         .set('Host', 'opengraph')
         .expect(200)
-        .expect(/<meta name="og:title" content="Bouncing/)
-        .expect(/<meta name="og:image" content="https:\/\/cdn2\.scratch\.mit\.edu\//);
+        .expect(/<meta property="og:title" content="Bouncing/)
+        .expect(/<meta property="og:image" content="https:\/\/cdn2\.scratch\.mit\.edu\//);
 });
 
 it('returns opengraph to spider in editor', async () => {
@@ -16,7 +16,7 @@ it('returns opengraph to spider in editor', async () => {
         .set('User-Agent', 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)')
         .set('Host', 'opengraph')
         .expect(200)
-        .expect(/<meta name="og:title" content="Bouncing/);
+        .expect(/<meta property="og:title" content="Bouncing/);
 });
 
 it('returns opengraph to spider in fullscreen', async () => {
@@ -24,5 +24,5 @@ it('returns opengraph to spider in fullscreen', async () => {
         .set('User-Agent', 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)')
         .set('Host', 'opengraph')
         .expect(200)
-        .expect(/<meta name="og:title" content="Bouncing/);
+        .expect(/<meta property="og:title" content="Bouncing/);
 });
