@@ -1,9 +1,13 @@
-const SPIDERS = [
-    'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)'
-];
-
 const isSpider = (userAgent) => {
-    return SPIDERS.includes(userAgent);
+    if (typeof userAgent !== 'string') {
+        return false;
+    }
+    return (
+        userAgent.includes('Googlebot') ||
+        userAgent.includes('Discordbot') ||
+        userAgent.includes('bingbot') ||
+        userAgent.includes('Twitterbot')
+    );
 };
 
 module.exports = isSpider;
