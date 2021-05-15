@@ -337,6 +337,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     }
 
     const opengraph =
+      '<meta name="theme-color" content="#ff4c4c" />' +
       '<meta property="og:type" content="website" />' +
       `<meta property="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp" />` +
       `<meta property="og:image" content="${escapeHTML(projectMeta.image)}" />` +
