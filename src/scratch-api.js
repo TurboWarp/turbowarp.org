@@ -6,6 +6,9 @@ const OPTIONS = {
     agent: new https.Agent({
         keepAlive: true
     }),
+    headers: {
+        referer: 'https://project-og.turbowarp.org'
+    },
     timeout: 5000
 };
 
