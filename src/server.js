@@ -7,12 +7,15 @@ const etag = require('etag');
 const fresh = require('fresh');
 const asyncHandler = require('express-async-handler');
 const statFile = promisify(fs.stat);
+const readFile = promisify(fs.readFile);
 
 const fileTypes = require('./types');
 const hosts = require('./hosts');
 const stats = require('./stats');
 const logger = require('./logger');
 const environment = require('./environment');
+const isSpider = require('./spider');
+const ScratchAPI = require('./scratch-api');
 
 const notFoundFile = fs.readFileSync(path.join(__dirname, '404.html'));
 
@@ -41,6 +44,8 @@ app.set('etag', false);
 app.set('case sensitive routing', false);
 app.set('strict routing', false);
 app.set('trust proxy', true);
+
+const escapeHTML = str => str.replace(/([<>'"&])/g, (_, l) => `&#${l.charCodeAt(0)};`);
 
 const safeJoin = (root, file) => {
   const newPath = path.join(root, file);
@@ -113,21 +118,6 @@ const chooseEncoding = async (acceptedEncodings, fileEncodings, filePath) => {
   return null;
 };
 
-const handleWildcardRedirects = (branchRelativePath) => {
-  if (/^\/(?:\d+\/?)?$/.test(branchRelativePath)) {
-    return '/index.html';
-  } else if (/^\/(?:\d+\/)?editor\/?$/i.test(branchRelativePath)) {
-    return '/editor.html';
-  } else if (/^\/(?:\d+\/)?fullscreen\/?$/i.test(branchRelativePath)) {
-    return '/fullscreen.html';
-  } else if (/^\/(?:\d+\/)?embed\/?$/i.test(branchRelativePath)) {
-    return '/embed.html';
-  } else if (/^\/addons\/?$/i.test(branchRelativePath)) {
-    return '/addons.html';
-  }
-  return null;
-};
-
 app.use((req, res, next) => {
   res.header('X-Content-Type-Options', 'nosniff');
   res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -171,13 +161,15 @@ app.use((req, res, next) => {
         return;
       }
 
-      const redirectPath = handleWildcardRedirects(branchRelativePath);
-      if (redirectPath !== null) {
-        req.logicalPath = `${prefix}${redirectPath}`;
-      }
+      req.branchPrefix = prefix;
+      req.branchRelativePath = branchRelativePath;
+    } else {
+      req.branchPrefix = '';
+      req.branchRelativePath = path;  
     }
   } else {
     // Redirect /projects/123 to /123
+    // TODO move to this to seperate app.get()
     const projectMatch = path.match(/^\/(?:https:\/\/scratch\.mit\.edu\/)?projects\/(\d+)\/?$/);
     if (projectMatch) {
       const search = url.parse(req.url).search;
@@ -185,10 +177,8 @@ app.use((req, res, next) => {
       return;
     }
 
-    const redirectPath = handleWildcardRedirects(path);
-    if (redirectPath !== null) {
-      req.logicalPath = redirectPath;
-    }
+    req.branchPrefix = '';
+    req.branchRelativePath = path;
   }
 
   req.root = host.root;
@@ -226,7 +216,37 @@ app.get('*', (req, res, next) => {
 });
 
 app.get('/*', asyncHandler(async (req, res, next) => {
-  const pathName = req.logicalPath || req.path;
+  let pathName = req.path;
+  let projectId = null;
+  let projectMeta = null;
+
+  {
+    const branchRelativePath = req.branchRelativePath;
+    const branchPrefix = req.branchPrefix;
+    let match;
+    if (match = branchRelativePath.match(/^\/(\d+\/?)?$/)) {
+      pathName = `${branchPrefix}/index.html`;
+      projectId = match[1];
+    } else if (match = branchRelativePath.match(/^\/(\d+\/)?editor\/?$/i)) {
+      pathName = `${branchPrefix}/editor.html`;
+      projectId = match[1];
+    } else if (match = branchRelativePath.match(/^\/(\d+\/)?fullscreen\/?$/i)) {
+      pathName = `${branchPrefix}/fullscreen.html`;
+      projectId = match[1];
+    } else if (/^\/(?:\d+\/)?embed\/?$/i.test(branchRelativePath)) {
+      pathName = `${branchPrefix}/embed.html`;
+    } else if (/^\/addons\/?$/i.test(branchRelativePath)) {
+      pathName = `${branchPrefix}/addons.html`;
+    }
+  }
+
+  if (projectId && isSpider(req.get('User-Agent'))) {
+    try {
+      projectMeta = await ScratchAPI.getProjectMeta(projectId);
+    } catch (e) {
+      // ignore
+    }
+  }
 
   if (/[^a-zA-Z0-9.\-_\/~]/.test(pathName)) {
     next();
@@ -288,28 +308,37 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     }
   }
 
-  const stream = fs.createReadStream(filePath);
-
-  stream.on('open', () => {
-    // Don't send file headers until just before we start sending the file
-    // Otherwise if we sent these earlier, we might send headers that don't make sense for eg. an error message
+  const sendFileHeaders = () => {
+    stats.handleServedFile(pathName);
     res.setHeader('Content-Type', fileType.type);
-    res.setHeader('Content-Length', fileStat.size);
+    res.setHeader('ETag', etagValue);
     if (contentEncoding !== null) {
       res.setHeader('Content-Encoding', contentEncoding);
     }
-    res.setHeader('ETag', etagValue);
     if (varyAcceptEncoding) {
       res.setHeader('Vary', 'Accept-Encoding');
     }
-    stats.handleServedFile(pathName);
-    stream.pipe(res);
-  });
+  };
 
-  stream.on('error', (err) => {
-    // This should never happen.
-    next(err);
-  });
+  if (projectMeta) {
+    const fileContents = await readFile(filePath, 'utf-8');
+    sendFileHeaders();
+    const opengraph =
+      `<meta name="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp" />` +
+      `<meta name="og:image" content="${escapeHTML(projectMeta.image)}" />`;
+    res.send(fileContents.replace('</head>', opengraph + '</head>'));
+  } else {
+    const stream = fs.createReadStream(filePath);
+    stream.on('open', () => {
+      sendFileHeaders();
+      res.setHeader('Content-Length', fileStat.size);
+      stream.pipe(res);
+    });
+    stream.on('error', (err) => {
+      // This should never happen.
+      next(err);
+    });
+  }
 }));
 
 app.use((req, res) => {

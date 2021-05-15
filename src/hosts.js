@@ -28,6 +28,10 @@ if (environment.isTest) {
     'notlocalhost': {
       root: path.join(__dirname, '../test/notlocalhost'),
       branches: true
+    },
+    'opengraph': {
+      root: path.join(__dirname, '../test/opengraph'),
+      branches: false
     }
   };
 } else {
