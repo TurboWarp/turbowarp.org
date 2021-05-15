@@ -324,8 +324,11 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     const fileContents = await readFile(filePath, 'utf-8');
     sendFileHeaders();
     const opengraph =
-      `<meta name="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp" />` +
-      `<meta name="og:image" content="${escapeHTML(projectMeta.image)}" />`;
+      '<meta property="og:type" content="website" />' +
+      `<meta property="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp" />` +
+      `<meta property="og:image" content="${escapeHTML(projectMeta.image)}" />` +
+      `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}" />` +
+      `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}" />`;
     res.send(fileContents.replace('</head>', opengraph + '</head>'));
   } else {
     const stream = fs.createReadStream(filePath);
