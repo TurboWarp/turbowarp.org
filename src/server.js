@@ -337,13 +337,16 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     }
 
     const opengraph =
-      '<meta name="theme-color" content="#ff4c4c" />' +
-      '<meta property="og:type" content="website" />' +
-      `<meta property="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp" />` +
-      `<meta property="og:image" content="${escapeHTML(projectMeta.image)}" />` +
-      `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}" />` +
-      `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}" />` +
-      `<meta property="og:description" content="${escapeHTML(description)}" />`;
+      '<meta name="theme-color" content="#ff4c4c">' +
+      '<meta property="og:type" content="website">' +
+      `<meta property="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp">` +
+      `<meta property="og:image" content="${escapeHTML(projectMeta.image)}">` +
+      `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}">` +
+      `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}">` +
+      `<meta property="og:description" content="${escapeHTML(description)}">` +
+      '<meta property="og:site_name" content="TurboWarp">' +
+      '<meta property="og:image:width" content="768">' +
+      '<meta property="og:image:height" content="435">';
     res.send(fileContents.replace('</head>', opengraph + '</head>'));
   } else {
     const stream = fs.createReadStream(filePath);
