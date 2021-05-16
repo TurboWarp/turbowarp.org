@@ -345,8 +345,8 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}">` +
       `<meta property="og:description" content="${escapeHTML(description)}">` +
       '<meta property="og:site_name" content="TurboWarp">' +
-      '<meta property="og:image:width" content="768">' +
-      '<meta property="og:image:height" content="435">' +
+      '<meta property="og:image:width" content="480">' +
+      '<meta property="og:image:height" content="360">' +
       '<meta name="twitter:card" content="summary_large_image">';
     res.send(fileContents.replace('</head>', opengraph + '</head>'));
   } else {
