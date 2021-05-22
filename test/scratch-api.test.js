@@ -12,6 +12,6 @@ it('getProjectMeta on unshared project', async () => {
     try {
         await ScratchAPI.getProjectMeta('531027641');
     } catch (e) {
-        expect(e.message).toMatch('404');
+        expect(e.message).toMatch('unshared');
     }
 });

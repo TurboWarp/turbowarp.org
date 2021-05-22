@@ -14,6 +14,9 @@ const OPTIONS = {
 
 const getProjectMeta = async (id) => {
     const response = await fetch(API.replace('$id', id), OPTIONS);
+    if (response.status === 404) {
+        throw new Error('Project is unshared');
+    }
     if (!response.ok) {
         throw new Error(`Unexpected status code: ${response.status}`);
     }

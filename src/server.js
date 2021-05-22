@@ -219,6 +219,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   let pathName = req.path;
   let projectId = null;
   let projectMeta = null;
+  let projectUnshared = false;
 
   {
     const branchRelativePath = req.branchRelativePath;
@@ -244,7 +245,11 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     try {
       projectMeta = await ScratchAPI.getProjectMeta(projectId);
     } catch (e) {
-      // ignore
+      if (e.message.includes('unshared')) {
+        projectUnshared = true;
+      } else {
+        logger.error(e);
+      }
     }
   }
 
@@ -321,10 +326,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     }
   };
 
-  if (projectMeta) {
-    const fileContents = await readFile(filePath, 'utf-8');
-    sendFileHeaders();
-
+  if (projectMeta || projectUnshared) {
     let description;
     if (projectMeta.instructions && projectMeta.description) {
       description = `${projectMeta.instructions}\n${projectMeta.description}`;
@@ -336,19 +338,33 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       description = '';
     }
 
-    const opengraph =
-      '<meta name="theme-color" content="#ff4c4c">' +
-      '<meta property="og:type" content="website">' +
-      `<meta property="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp">` +
-      `<meta property="og:image" content="${escapeHTML(projectMeta.image)}">` +
-      `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}">` +
-      `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}">` +
-      `<meta property="og:description" content="${escapeHTML(description)}">` +
-      '<meta property="og:site_name" content="TurboWarp">' +
-      '<meta property="og:image:width" content="480">' +
-      '<meta property="og:image:height" content="360">' +
-      '<meta name="twitter:card" content="summary_large_image">';
-    res.send(fileContents.replace('</head>', opengraph + '</head>'));
+    let fileContents = await readFile(filePath, 'utf-8');
+
+    // Insert some extra headers at the end of <head>
+    let newHead;
+    if (projectMeta) {
+      newHead =
+        '<meta name="theme-color" content="#ff4c4c">' +
+        '<meta property="og:type" content="website">' +
+        `<meta property="og:title" content="${escapeHTML(projectMeta.title)} - TurboWarp">` +
+        `<meta property="og:image" content="${escapeHTML(projectMeta.image)}">` +
+        `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}">` +
+        `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}">` +
+        `<meta property="og:description" content="${escapeHTML(description)}">` +
+        `<meta name="description" content="${escapeHTML(description)}" />` +
+        '<meta property="og:site_name" content="TurboWarp">' +
+        '<meta property="og:image:width" content="480">' +
+        '<meta property="og:image:height" content="360">' +
+        '<meta name="twitter:card" content="summary_large_image">';
+      // Remove old description to ensure that the new one takes precedence
+      fileContents = fileContents.replace('<meta name="description" content="TurboWarp is a Scratch mod with a compiler to run projects faster, dark mode for your eyes, a bunch of addons to improve the editor, and more." />', '');
+    } else if (projectUnshared) {
+      newHead = '<meta name="robots" content="noindex">';
+    }
+    fileContents = fileContents.replace('</head>', newHead + '</head>');
+
+    sendFileHeaders();
+    res.send(fileContents);
   } else {
     const stream = fs.createReadStream(filePath);
     stream.on('open', () => {
