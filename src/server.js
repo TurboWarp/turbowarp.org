@@ -327,22 +327,20 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   };
 
   if (projectMeta || projectUnshared) {
-    let description;
-    if (projectMeta.instructions && projectMeta.description) {
-      description = `${projectMeta.instructions}\n${projectMeta.description}`;
-    } else if (projectMeta.instructions) {
-      description = projectMeta.instructions;
-    } else if (projectMeta.description) {
-      description = projectMeta.description;
-    } else {
-      description = '';
-    }
-
     let fileContents = await readFile(filePath, 'utf-8');
 
-    // Insert some extra headers at the end of <head>
     let newHead;
     if (projectMeta) {
+      let description;
+      if (projectMeta.instructions && projectMeta.description) {
+        description = `${projectMeta.instructions}\n${projectMeta.description}`;
+      } else if (projectMeta.instructions) {
+        description = projectMeta.instructions;
+      } else if (projectMeta.description) {
+        description = projectMeta.description;
+      } else {
+        description = '';
+      }  
       newHead =
         '<meta name="theme-color" content="#ff4c4c">' +
         '<meta property="og:type" content="website">' +
@@ -361,7 +359,9 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     } else if (projectUnshared) {
       newHead = '<meta name="robots" content="noindex">';
     }
-    fileContents = fileContents.replace('</head>', newHead + '</head>');
+    if (newHead) {
+      fileContents = fileContents.replace('</head>', newHead + '</head>');
+    }
 
     sendFileHeaders();
     res.send(fileContents);
