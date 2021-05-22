@@ -6,6 +6,13 @@ const isSpider = (userAgent) => {
         userAgent.includes('Googlebot') ||
         userAgent.includes('Discordbot') ||
         userAgent.includes('bingbot') ||
+        userAgent.includes('YandexBot') ||
+        userAgent.includes('Applebot') ||
+        userAgent.includes('Embedly') ||
+        userAgent.includes('Slackbot') ||
+        userAgent.includes('redditbot') ||
+        userAgent.includes('WhatsApp') ||
+        userAgent.includes('TelegramBot') ||
         userAgent.includes('Twitterbot')
     );
 };
