@@ -165,7 +165,7 @@ app.use((req, res, next) => {
       req.branchRelativePath = branchRelativePath;
     } else {
       req.branchPrefix = '';
-      req.branchRelativePath = path;  
+      req.branchRelativePath = path;
     }
   } else {
     // Redirect /projects/123 to /123
@@ -252,6 +252,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       }
     }
   }
+  const requiresSpecialRewriting = projectMeta || projectUnshared;
 
   if (/[^a-zA-Z0-9.\-_\/~]/.test(pathName)) {
     next();
@@ -287,7 +288,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   let contentEncoding = null;
   const fileEncodings = fileType.encodings;
   // Due to terrible file response rewriting, don't use content encoding on OG requests
-  if (fileEncodings.length > 0 && !projectMeta) {
+  if (fileEncodings.length > 0 && !requiresSpecialRewriting) {
     const acceptedEncodings = req.acceptsEncodings();
     const bestEncoding = await chooseEncoding(acceptedEncodings, fileEncodings, filePath);
     if (bestEncoding !== null) {
@@ -326,7 +327,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     }
   };
 
-  if (projectMeta || projectUnshared) {
+  if (requiresSpecialRewriting) {
     let fileContents = await readFile(filePath, 'utf-8');
 
     let newHead;
@@ -340,7 +341,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
         description = projectMeta.description;
       } else {
         description = '';
-      }  
+      }
       newHead =
         '<meta name="theme-color" content="#ff4c4c">' +
         '<meta property="og:type" content="website">' +
@@ -349,7 +350,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
         `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}">` +
         `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}">` +
         `<meta property="og:description" content="${escapeHTML(description)}">` +
-        `<meta name="description" content="${escapeHTML(description)}" />` +
+        `<meta name="description" content="${escapeHTML(description)}">` +
         '<meta property="og:site_name" content="TurboWarp">' +
         '<meta property="og:image:width" content="480">' +
         '<meta property="og:image:height" content="360">' +
