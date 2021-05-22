@@ -357,7 +357,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
         '<meta property="og:image:height" content="360">' +
         '<meta name="twitter:card" content="summary_large_image">';
       // Remove old description to ensure that the new one takes precedence
-      fileContents = fileContents.replace('<meta name="description" content="TurboWarp is a Scratch mod with a compiler to run projects faster, dark mode for your eyes, a bunch of addons to improve the editor, and more." />', '');
+      fileContents = fileContents.replace(/<meta name="description" content="TurboWarp is a Scratch mod with a compiler to run projects faster, dark mode for your eyes, a bunch of addons to improve the editor, and more." ?\/>/, '');
     } else if (projectUnshared) {
       newHead = '<meta name="robots" content="noindex">';
     }
