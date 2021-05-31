@@ -346,6 +346,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
         '<meta name="theme-color" content="#ff4c4c">' +
         '<meta property="og:type" content="website">' +
         `<meta property="og:title" content="${escapeHTML(projectMeta.title)}">` +
+        `<title>${escapeHTML(projectMeta.title)}</title>` +
         `<meta property="og:image" content="${escapeHTML(projectMeta.image)}">` +
         `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}">` +
         `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}">` +
@@ -355,8 +356,8 @@ app.get('/*', asyncHandler(async (req, res, next) => {
         '<meta property="og:image:width" content="480">' +
         '<meta property="og:image:height" content="360">' +
         '<meta name="twitter:card" content="summary_large_image">';
-      // Remove old description to ensure that the new one takes precedence
       fileContents = fileContents.replace(/<meta name="description" content="TurboWarp is a Scratch mod with a compiler to run projects faster, dark mode for your eyes, a bunch of addons to improve the editor, and more." ?\/>/, '');
+      fileContents = fileContents.replace(/<title>TurboWarp - Run Scratch projects faster<\/title>/, '');
     } else if (projectUnshared) {
       newHead = '<meta name="robots" content="noindex">';
     }
