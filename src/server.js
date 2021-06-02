@@ -355,7 +355,8 @@ app.get('/*', asyncHandler(async (req, res, next) => {
         '<meta property="og:site_name" content="TurboWarp">' +
         '<meta property="og:image:width" content="480">' +
         '<meta property="og:image:height" content="360">' +
-        '<meta name="twitter:card" content="summary_large_image">';
+        '<meta name="twitter:card" content="summary_large_image">' +
+        '<script>window.DISABLE_ANALYTICS=1;</script>';
       fileContents = fileContents.replace(/<meta name="description" content="TurboWarp is a Scratch mod with a compiler to run projects faster, dark mode for your eyes, a bunch of addons to improve the editor, and more." ?\/>/, '');
       fileContents = fileContents.replace(/<title>TurboWarp - Run Scratch projects faster<\/title>/, '');
     } else if (projectUnshared) {
