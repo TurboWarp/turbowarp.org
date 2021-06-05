@@ -204,7 +204,7 @@ app.get('*/static/assets/*', (req, res, next) => {
 });
 app.get('*/static/blocks-media/*', (req, res, next) => {
   // File names don't contain hash of content, but these files are hot and will rarely change.
-  res.header('Cache-Control', 'public, max-age=3600, immutable');
+  res.header('Cache-Control', 'public, max-age=604800, immutable');
   next();
 });
 app.get('*', (req, res, next) => {
