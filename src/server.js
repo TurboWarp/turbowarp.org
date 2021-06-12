@@ -227,17 +227,18 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     const branchRelativePath = req.branchRelativePath;
     const branchPrefix = req.branchPrefix;
     let match;
-    if (match = branchRelativePath.match(/^\/(\d+\/?)?$/)) {
+    if (match = branchRelativePath.match(/^\/(\d+)?\/?$/)) {
       pathName = `${branchPrefix}/index.html`;
       projectId = match[1];
-    } else if (match = branchRelativePath.match(/^\/(\d+\/)?editor\/?$/i)) {
+    } else if (match = branchRelativePath.match(/^\/(?:(\d+)\/)?editor\/?$/i)) {
       pathName = `${branchPrefix}/editor.html`;
       projectId = match[1];
-    } else if (match = branchRelativePath.match(/^\/(\d+\/)?fullscreen\/?$/i)) {
+    } else if (match = branchRelativePath.match(/^\/(?:(\d+)\/)?fullscreen\/?$/i)) {
       pathName = `${branchPrefix}/fullscreen.html`;
       projectId = match[1];
-    } else if (/^\/(?:\d+\/)?embed\/?$/i.test(branchRelativePath)) {
+    } else if (match = branchRelativePath.match(/^\/(?:(\d+)\/)?embed\/?$/i)) {
       pathName = `${branchPrefix}/embed.html`;
+      projectId = match[1];
     } else if (/^\/addons\/?$/i.test(branchRelativePath)) {
       pathName = `${branchPrefix}/addons.html`;
     }
