@@ -2,3 +2,4 @@ node_modules
 .nyc_output
 /hosts.js
 logs
+blocklist.json

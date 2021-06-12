@@ -16,8 +16,10 @@ const logger = require('./logger');
 const environment = require('./environment');
 const isSpider = require('./spider');
 const ScratchAPI = require('./scratch-api');
+const getBlocked = require('./gatekeeper');
 
 const notFoundFile = fs.readFileSync(path.join(__dirname, '404.html'));
+const blockedFile = fs.readFileSync(path.join(__dirname, 'blocked.html') ,'utf-8');
 
 // We need to make sure that all the roots have a trailing / to ensure that the path traversal prevention works properly.
 // Otherwise a root of "/var/www" would allow someone to read files in /var/www-top-secret-do-not-read
@@ -238,6 +240,15 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       pathName = `${branchPrefix}/embed.html`;
     } else if (/^\/addons\/?$/i.test(branchRelativePath)) {
       pathName = `${branchPrefix}/addons.html`;
+    }
+  }
+
+  if (projectId) {
+    const blocked = getBlocked(projectId);
+    if (blocked) {
+      res.status(404);
+      res.send(blockedFile.replace('{REASON}', blocked));
+      return;
     }
   }
 
