@@ -14,7 +14,7 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "fresh": "^0.5.2",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
   },
