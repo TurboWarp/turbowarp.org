@@ -169,10 +169,12 @@ app.use((req, res, next) => {
   } else {
     // Redirect /projects/123 to /123
     // TODO move to this to seperate app.get()
-    const projectMatch = path.match(/^\/(?:https:\/\/scratch\.mit\.edu\/)?projects\/(\d+)\/?$/);
+    const projectMatch = path.match(/^\/(?:https:\/\/scratch\.mit\.edu\/)?projects\/(\d+)\/?(?:(editor|fullscreen|embed)\/?)?$/);
     if (projectMatch) {
       const search = url.parse(req.url).search;
-      res.redirect(`/${projectMatch[1]}${search || ''}`);
+      const id = projectMatch[1];
+      const pageType = projectMatch[2];
+      res.redirect(`/${id}${pageType ? `/${pageType}` : ''}${search || ''}`);
       return;
     }
 
