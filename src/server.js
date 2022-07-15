@@ -395,10 +395,16 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   const message = err && err.stack || err;
   logger.error(message);
-  res.setHeader('Cache-Control', 'no-store');
-  res.status(500);
-  res.contentType('text/plain');
-  res.send('Internal server error');
+  if (res.headersSent) {
+    // Too late to try sending a proper error page.
+    logger.warn('Headers already sent. Unable to send proper error page.');
+    res.end();
+  } else {
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(500);
+    res.contentType('text/plain');
+    res.send('Internal server error');
+  }
 });
 
 module.exports = app;
