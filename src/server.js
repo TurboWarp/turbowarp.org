@@ -375,18 +375,12 @@ app.get('/*', asyncHandler(async (req, res, next) => {
 
     // If the stream is taking a completely unreasonable amount of time, assume that something timed
     // out and the connection ought to be killed.
-    let timedOut = false;
     const timeoutId = setTimeout(() => {
-      timedOut = true;
-      stream.close();
-      next(new Error('Stream timed out'));
+      // Will trigger stream error handler.
+      stream.destroy(new Error('Timed out'));
     }, 1000 * 60 * 60);
 
     stream.on('open', () => {
-      if (timedOut) {
-        // Connection already dead. The process will die if we try to send headers.
-        return;
-      }
       sendFileHeaders();
       res.setHeader('Content-Length', fileStat.size);
       stream.pipe(res);
