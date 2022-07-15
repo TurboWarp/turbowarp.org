@@ -344,13 +344,15 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       } else {
         description = '';
       }
+      const author = projectMeta.author.username;
       newHead =
         '<meta name="theme-color" content="#ff4c4c">' +
         '<meta property="og:type" content="website">' +
         `<meta property="og:title" content="${escapeHTML(projectMeta.title)}">` +
         `<title>${escapeHTML(projectMeta.title)}</title>` +
         `<meta property="og:image" content="${escapeHTML(projectMeta.image)}">` +
-        `<meta property="og:author" content="${escapeHTML(projectMeta.author.username)}">` +
+        `<meta property="og:author" content="${escapeHTML(author)}">` +
+        `<meta name="author" content="${escapeHTML(author)}">` +
         `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}">` +
         `<meta property="og:description" content="${escapeHTML(description)}">` +
         `<meta name="description" content="${escapeHTML(description)}">` +
