@@ -413,7 +413,12 @@ app.use((err, req, res, next) => {
     res.setHeader('Cache-Control', 'no-store');
     res.status(500);
     res.contentType('text/plain');
-    res.send('Internal server error');
+
+    let errorPage = '500 Internal server error';
+    if (environment.isDevelopment) {
+      errorPage += `\n\n${message}`;
+    }
+    res.send(errorPage);
   }
 });
 
