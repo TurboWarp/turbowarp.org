@@ -381,6 +381,11 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       stream.destroy(new Error('Timed out'));
     }, 1000 * 60 * 60);
 
+    const onResponseClose = () => {
+      logger.warn('Response closed');
+    };
+    res.on('close', onResponseClose);
+
     stream.on('open', () => {
       sendFileHeaders();
       res.setHeader('Content-Length', fileStat.size);
@@ -388,6 +393,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     });
     stream.on('end', () => {
       clearTimeout(timeoutId);
+      res.off('close', onResponseClose);
     });
     stream.on('error', (err) => {
       next(err);
