@@ -304,17 +304,15 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   const etagValue = etag(fileStat, {
     weak: true
   });
-  if (filePath.includes('staging') || environment.isTest) {
-    if (fresh(req.headers, {etag: etagValue})) {
-      res.status(304);
-      res.setHeader('ETag', etagValue);
-      if (varyAcceptEncoding) {
-        res.setHeader('Vary', 'Accept-Encoding');
-      }
-      stats.handleServedFile(pathName);
-      res.end();
-      return;
+  if (fresh(req.headers, {etag: etagValue})) {
+    res.status(304);
+    res.setHeader('ETag', etagValue);
+    if (varyAcceptEncoding) {
+      res.setHeader('Vary', 'Accept-Encoding');
     }
+    stats.handleServedFile(pathName);
+    res.end();
+    return;
   }
 
   const sendFileHeaders = () => {
