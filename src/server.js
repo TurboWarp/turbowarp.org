@@ -18,6 +18,7 @@ const isSpider = require('./spider');
 const ScratchAPI = require('./scratch-api');
 
 const notFoundFile = fs.readFileSync(path.join(__dirname, '404.html'));
+const userPageFile = fs.readFileSync(path.join(__dirname, 'userpage.html'));
 
 // We need to make sure that all the roots have a trailing / to ensure that the path traversal prevention works properly.
 // Otherwise a root of "/var/www" would allow someone to read files in /var/www-top-secret-do-not-read
@@ -193,6 +194,12 @@ app.get('/donate', (req, res) => res.redirect('https://muffin.ink/donate'));
 app.get('/desktop', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/download', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/packager', (req, res) => res.redirect('https://packager.turbowarp.org/'));
+
+app.get('/users/:user', (req, res) => {
+  res.contentType('text/html');
+  res.status(404);
+  res.send(userPageFile);
+});
 
 app.get('*/js/*', (req, res, next) => {
   // File names contain hash of content, can cache forever.
