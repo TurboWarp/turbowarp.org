@@ -189,6 +189,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/donate', (req, res) => res.redirect('https://muffin.ink/donate'));
 app.get('/desktop', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/download', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/packager', (req, res) => res.redirect('https://packager.turbowarp.org/'));

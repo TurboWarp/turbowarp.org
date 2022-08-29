@@ -39,3 +39,9 @@ it('redirects /packager/ to packager website', async () => {
     .expect(302);
   expect(req.headers['location']).toBe('https://packager.turbowarp.org/');
 });
+
+it('redirects /donate to a donation page', async () => {
+  const req = await request.get('/donate')
+    .set('Host', 'localhost')
+    .expect(302);
+});
