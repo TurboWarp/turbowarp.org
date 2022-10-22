@@ -168,9 +168,14 @@ app.use((req, res, next) => {
       req.branchRelativePath = path;
     }
   } else {
-    // Redirect /projects/123 to /123
-    // TODO move to this to seperate app.get()
-    const projectMatch = path.match(/^\/(?:https:\/\/scratch\.mit\.edu\/)?projects\/(\d+)\/?(?:(editor|fullscreen|embed)\/?)?$/);
+    // People send us a bunch of weird links and expect them to work.
+    // This will help them get to the right place.
+    const projectMatch = (
+      // /projects/123 to /123 and /https://scratch.mit.edu/projects/123 to /123
+      path.match(/^\/(?:https:\/\/scratch\.mit\.edu\/)?projects\/(\d+)\/?(?:(editor|fullscreen|embed)\/?)?$/) ||
+      // /123) to /123
+      path.match(/^\/(\d+)\/?(?:(editor|fullscreen|embed)\/?)?\)$/)
+    );
     if (projectMatch) {
       const search = url.parse(req.url).search;
       const id = projectMatch[1];
