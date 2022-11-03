@@ -4,7 +4,6 @@ it('getProjectMeta on shared project', async () => {
     const sharedProject = await ScratchAPI.getProjectMeta('437419376');
     expect(sharedProject.id).toBe(437419376);
     expect(sharedProject.title).toBe('Bouncing');
-    expect(sharedProject.image).toMatch(/^https:\/\/cdn2\.scratch\.mit\.edu\//);
 });
 
 it('getProjectMeta on unshared project', async () => {

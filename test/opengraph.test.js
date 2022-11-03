@@ -8,7 +8,7 @@ it('returns opengraph to spider on index', async () => {
         .set('Host', 'opengraph')
         .expect(200)
         .expect(/<meta property="og:title" content="Bouncing/)
-        .expect(/<meta property="og:image" content="https:\/\/cdn2\.scratch\.mit\.edu\//);
+        .expect(/<meta property="og:image" content="https:\/\/trampoline\.turbowarp\.org\/thumbnails\//);
 });
 
 it('returns opengraph to spider in editor', async () => {

@@ -361,7 +361,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
         '<meta property="og:type" content="website">' +
         `<meta property="og:title" content="${escapeHTML(projectMeta.title)}">` +
         `<title>${escapeHTML(projectMeta.title)}</title>` +
-        `<meta property="og:image" content="${escapeHTML(projectMeta.image)}">` +
+        `<meta property="og:image" content="${escapeHTML(`https://trampoline.turbowarp.org/thumbnails/${projectId}`)}">` +
         `<meta property="og:author" content="${escapeHTML(author)}">` +
         `<meta name="author" content="${escapeHTML(author)}">` +
         `<meta property="og:url" content="${escapeHTML(`https://turbowarp.org/${projectId}`)}">` +
