@@ -51,7 +51,13 @@ it('no-limits: project id redirects preserving query', async () => {
   expect(req.headers['location']).toBe('https://turbowarp.org/1234/editor?fps=60&turbo&limitless');
 });
 
-it('unsandboxed-extensions: redirects', async () => {
+it('unsandboxed-extensions: redirects without query', async () => {
+  const req = await request.get('/unsandboxed-extensions/')
+    .set('Host', 'notlocalhost')
+    .expect(302);
+  expect(req.headers['location']).toBe('https://turbowarp.org/');
+});
+it('unsandboxed-extensions: redirects with query', async () => {
   const req = await request.get('/unsandboxed-extensions/editor?extension=https://extensions.turbowarp.org/fetch.js')
     .set('Host', 'notlocalhost')
     .expect(302);
