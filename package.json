@@ -10,10 +10,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "etag": "^1.8.1",
     "express": "^4.18.2",
     "express-async-handler": "^1.1.4",
-    "fresh": "^0.5.2",
     "node-fetch": "^2.6.7",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
