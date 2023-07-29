@@ -161,7 +161,7 @@ app.use((req, res, next) => {
         return;
       }
 
-      if (branchName === 'unsandboxed-extensions') {
+      if (branchName === 'unsandboxed-extensions' || branchName === 'return') {
         const search = url.parse(req.url).search;
         res.redirect(`https://turbowarp.org${branchRelativePath}${search || ''}`);
         return;

@@ -63,3 +63,10 @@ it('unsandboxed-extensions: redirects with query', async () => {
     .expect(302);
   expect(req.headers['location']).toBe('https://turbowarp.org/editor?extension=https://extensions.turbowarp.org/fetch.js');
 });
+
+it('return: redirects', async () => {
+  const req = await request.get('/return/editor?fps=60')
+    .set('Host', 'notlocalhost')
+    .expect(302);
+  expect(req.headers['location']).toBe('https://turbowarp.org/editor?fps=60');
+});
