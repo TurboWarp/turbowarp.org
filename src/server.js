@@ -3,8 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const url = require('url');
 const promisify = require('util').promisify;
-const etag = require('etag');
-const fresh = require('fresh');
 const asyncHandler = require('express-async-handler');
 const statFile = promisify(fs.stat);
 const readFile = promisify(fs.readFile);
@@ -40,7 +38,6 @@ if (!environment.isTest) {
 
 const app = express();
 app.set('x-powered-by', false);
-// we handle ETag ourselves
 app.set('etag', false);
 app.set('case sensitive routing', false);
 app.set('strict routing', false);
@@ -320,24 +317,9 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   }
   const varyAcceptEncoding = fileEncodings.length > 0;
 
-  const etagValue = etag(fileStat, {
-    weak: true
-  });
-  if (fresh(req.headers, {etag: etagValue})) {
-    res.status(304);
-    res.setHeader('ETag', etagValue);
-    if (varyAcceptEncoding) {
-      res.setHeader('Vary', 'Accept-Encoding');
-    }
-    stats.handleServedFile(pathName);
-    res.end();
-    return;
-  }
-
   const sendFileHeaders = () => {
     stats.handleServedFile(pathName);
     res.setHeader('Content-Type', fileType.type);
-    res.setHeader('ETag', etagValue);
     if (contentEncoding !== null) {
       res.setHeader('Content-Encoding', contentEncoding);
     }
