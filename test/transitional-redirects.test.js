@@ -70,3 +70,10 @@ it('return: redirects', async () => {
     .expect(302);
   expect(req.headers['location']).toBe('https://turbowarp.org/editor?fps=60');
 });
+
+it('merge-upstream: redirects', async () => {
+  const req = await request.get('/merge-upstream/editor?fps=60')
+    .set('Host', 'notlocalhost')
+    .expect(302);
+  expect(req.headers['location']).toBe('https://staging.turbowarp.org/editor?fps=60');
+});
