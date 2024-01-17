@@ -158,15 +158,13 @@ app.use((req, res, next) => {
         return;
       }
 
-      if (branchName === 'unsandboxed-extensions' || branchName === 'return') {
+      if (
+        branchName === 'unsandboxed-extensions' ||
+        branchName === 'return' ||
+        branchName === 'merge-upstream'
+      ) {
         const search = url.parse(req.url).search;
         res.redirect(`https://turbowarp.org${branchRelativePath}${search || ''}`);
-        return;
-      }
-
-      if (branchName === 'merge-upstream') {
-        const search = url.parse(req.url).search;
-        res.redirect(`https://staging.turbowarp.org${branchRelativePath}${search || ''}`);
         return;
       }
 
