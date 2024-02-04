@@ -61,5 +61,11 @@ module.exports = {
   '.otf': {
     type: 'font/otf',
     encodings: [br, gz]
-  }
+  },
+  '.woff': {
+    type: 'font/woff'
+  },
+  '.woff2': {
+    type: 'font/woff2'
+  },
 };
