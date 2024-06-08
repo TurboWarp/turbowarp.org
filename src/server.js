@@ -181,7 +181,7 @@ app.use((req, res, next) => {
       // /projects/123 to /123 and /https://scratch.mit.edu/projects/123 to /123
       path.match(/^\/(?:https:\/\/scratch\.mit\.edu\/)?projects\/(\d+)\/?(?:(editor|fullscreen|embed)\/?)?$/) ||
       // /123) to /123
-      path.match(/^\/(\d+)\/?(?:(editor|fullscreen|embed)\/?)?\)$/)
+      path.match(/^\/(\d+)\/?(?:(editor|fullscreen|embed)\/?)?\)+$/)
     );
     if (projectMatch) {
       const search = url.parse(req.url).search;

@@ -67,3 +67,9 @@ it('redirects /id/editor/) to /id', () => {
     .set('Host', 'localhost')
     .expect('Location', '/104/editor');
 });
+
+it('redirects /id)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) to /id', () => {
+  return request.get('/104))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))')
+    .set('Host', 'localhost')
+    .expect('Location', '/104');
+});
