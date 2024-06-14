@@ -209,6 +209,14 @@ app.get('/packager', (req, res) => res.redirect('https://packager.turbowarp.org/
 app.get('/docs', (req, res) => res.redirect('https://docs.turbowarp.org/'));
 app.get('/extensions', (req, res) => res.redirect('https://extensions.turbowarp.org/'));
 app.get('/unpackager', (req, res) => res.redirect('https://turbowarp.github.io/unpackager/'));
+app.get('/trampoline', (req, res) => res.redirect('https://trampoline.turbowarp.org/'));
+app.get('/clouddata', (req, res) => res.redirect('https://clouddata.turbowarp.org/'));
+app.get('/share', (req, res) => res.redirect('https://share.turbowarp.org/'));
+app.get('/sb3fix', (req, res) => res.redirect('https://turbowarp.github.io/sb3fix/'));
+app.get('/types', (req, res) => res.redirect('https://turbowarp.github.io/types/'));
+app.get('/types-tw', (req, res) => res.redirect('https://turbowarp.github.io/types-tw/'));
+app.get('/scratch-vm', (req, res) => res.redirect('https://turbowarp.github.io/scratch-vm/'));
+app.get('/scratch-blocks', (req, res) => res.redirect('https://turbowarp.github.io/scratch-blocks/tests/vertical_playground_compressed.html'));
 app.get('/discover-addons', (req, res) => res.redirect('/editor'));
 
 app.get('/users/:user', (req, res) => {
