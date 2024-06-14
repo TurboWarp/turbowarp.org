@@ -207,6 +207,7 @@ app.get('/desktop', (req, res) => res.redirect('https://desktop.turbowarp.org/')
 app.get('/download', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/packager', (req, res) => res.redirect('https://packager.turbowarp.org/'));
 app.get('/packager-legacy', (req, res) => res.redirect('https://packager-legacy.turbowarp.org/'));
+app.get('/packager-extras', (req, res) => res.redirect('https://github.com/TurboWarp/packager-extras/releases'));
 app.get('/docs', (req, res) => res.redirect('https://docs.turbowarp.org/'));
 app.get('/extensions', (req, res) => res.redirect('https://extensions.turbowarp.org/'));
 app.get('/unpackager', (req, res) => res.redirect('https://turbowarp.github.io/unpackager/'));
@@ -218,6 +219,7 @@ app.get('/types', (req, res) => res.redirect('https://turbowarp.github.io/types/
 app.get('/types-tw', (req, res) => res.redirect('https://turbowarp.github.io/types-tw/'));
 app.get('/scratch-vm', (req, res) => res.redirect('https://turbowarp.github.io/scratch-vm/'));
 app.get('/scratch-blocks', (req, res) => res.redirect('https://turbowarp.github.io/scratch-blocks/tests/vertical_playground_compressed.html'));
+app.get('/sb-downloader', (req, res) => res.redirect('https://forkphorus.github.io/sb-downloader/'));
 app.get('/discover-addons', (req, res) => res.redirect('/editor'));
 
 app.get('/users/:user', (req, res) => {
