@@ -206,6 +206,7 @@ app.get('/donate', (req, res) => res.redirect('https://muffin.ink/donate.html'))
 app.get('/desktop', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/download', (req, res) => res.redirect('https://desktop.turbowarp.org/'));
 app.get('/packager', (req, res) => res.redirect('https://packager.turbowarp.org/'));
+app.get('/packager-legacy', (req, res) => res.redirect('https://packager-legacy.turbowarp.org/'));
 app.get('/docs', (req, res) => res.redirect('https://docs.turbowarp.org/'));
 app.get('/extensions', (req, res) => res.redirect('https://extensions.turbowarp.org/'));
 app.get('/unpackager', (req, res) => res.redirect('https://turbowarp.github.io/unpackager/'));
