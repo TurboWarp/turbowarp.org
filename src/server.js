@@ -336,17 +336,6 @@ app.get('/*', asyncHandler(async (req, res, next) => {
   }
   const varyAcceptEncoding = fileEncodings.length > 0;
 
-  const sendFileHeaders = () => {
-    stats.handleServedFile(pathName);
-    res.setHeader('Content-Type', fileType.type);
-    if (contentEncoding !== null) {
-      res.setHeader('Content-Encoding', contentEncoding);
-    }
-    if (varyAcceptEncoding) {
-      res.setHeader('Vary', 'Accept-Encoding');
-    }
-  };
-
   if (requiresSpecialRewriting) {
     let fileContents = await readFile(filePath, 'utf-8');
 
@@ -387,34 +376,23 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       fileContents = fileContents.replace('</head>', newHead + '</head>');
     }
 
-    sendFileHeaders();
+    res.setHeader('Content-Type', fileType.type);
+    if (varyAcceptEncoding) {
+      res.setHeader('Vary', 'Accept-Encoding');
+    }
     res.send(fileContents);
   } else {
-    const stream = fs.createReadStream(filePath);
+    const headers = {};
+    headers['Content-Type'] = fileType.type;
+    if (contentEncoding !== null) {
+      headers['Content-Encoding'] = contentEncoding;
+    }
+    if (varyAcceptEncoding) {
+      headers['Vary'] = 'Accept-Encoding';
+    }
 
-    // If the stream is taking a completely unreasonable amount of time, assume that something timed
-    // out and the connection ought to be killed.
-    const timeoutId = setTimeout(() => {
-      // Will trigger stream error handler.
-      stream.destroy(new Error('Timed out'));
-    }, 1000 * 60 * 60);
-
-    const onResponseClose = () => {
-      logger.warn('Response closed');
-    };
-    res.on('close', onResponseClose);
-
-    stream.on('open', () => {
-      sendFileHeaders();
-      res.setHeader('Content-Length', fileStat.size);
-      stream.pipe(res);
-    });
-    stream.on('end', () => {
-      clearTimeout(timeoutId);
-      res.off('close', onResponseClose);
-    });
-    stream.on('error', (err) => {
-      next(err);
+    res.sendFile(filePath, {
+      headers
     });
   }
 }));
