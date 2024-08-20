@@ -9,11 +9,11 @@ const gz = {
 
 module.exports = {
   '.html': {
-    type: 'text/html',
+    type: 'text/html; charset=utf-8',
     encodings: [br, gz]
   },
   '.js': {
-    type: 'text/javascript',
+    type: 'text/javascript; charset=utf-8',
     encodings: [br, gz]
   },
   '.txt': {
