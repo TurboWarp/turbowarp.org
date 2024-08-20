@@ -392,7 +392,12 @@ app.get('/*', asyncHandler(async (req, res, next) => {
     }
 
     res.sendFile(filePath, {
-      headers
+      headers,
+      etag: false,
+      lastModified: false,
+      acceptRanges: false,
+      extensions: false,
+      index: false,
     });
   }
 }));
