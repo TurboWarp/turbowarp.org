@@ -6,15 +6,19 @@ const gz = {
   name: 'gzip',
   extension: 'gz'
 };
+const zstd = {
+  name: 'zstd',
+  extension: 'zst'
+};
 
 module.exports = {
   '.html': {
     type: 'text/html; charset=utf-8',
-    encodings: [br, gz]
+    encodings: [br, zstd, gz]
   },
   '.js': {
     type: 'text/javascript; charset=utf-8',
-    encodings: [br, gz]
+    encodings: [br, zstd, gz]
   },
   '.txt': {
     type: 'text/plain'
@@ -28,7 +32,7 @@ module.exports = {
   },
   '.svg': {
     type: 'image/svg+xml',
-    encodings: [br, gz]
+    encodings: [br, zstd, gz]
   },
   '.png': {
     type: 'image/png'
@@ -56,11 +60,11 @@ module.exports = {
   },
   '.ttf': {
     type: 'font/ttf',
-    encodings: [br, gz]
+    encodings: [br, zstd, gz]
   },
   '.otf': {
     type: 'font/otf',
-    encodings: [br, gz]
+    encodings: [br, zstd, gz]
   },
   '.woff': {
     type: 'font/woff'
