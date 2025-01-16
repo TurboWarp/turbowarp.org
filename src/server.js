@@ -228,21 +228,29 @@ app.get('/users/:user', (req, res) => {
   res.send(userPageFile);
 });
 
-app.get('*/js/*', (req, res, next) => {
+// These files' names contain a hash of their content, so they can be cached forever.
+app.get([
+  '*/js/*',
+  '*/static/assets/*'
+], (req, res, next) => {
   // File names contain hash of content, can cache forever.
   res.header('Cache-Control', 'public, max-age=315360000, immutable');
   next();
 });
-app.get('*/static/assets/*', (req, res, next) => {
-  // File names contain hash of content, can cache forever.
-  res.header('Cache-Control', 'public, max-age=315360000, immutable');
-  next();
-});
-app.get('*/static/blocks-media/*', (req, res, next) => {
-  // File names don't contain hash of content, but these files are hot and will rarely change.
+
+// These files could change but they are reasonably hot and very rarely will change
+app.get([
+  '*/static/blocks-media/*',
+  '*/favicon.ico',
+  '*/manifest.webmanifest',
+  '*/images/*',
+  // Our sw.js is just a stub; if we actually used it then we would want to not list it here
+  '*/sw.js'
+], (req, res, next) => {
   res.header('Cache-Control', 'public, max-age=604800, immutable');
   next();
 });
+
 app.get('*', (req, res, next) => {
   // Ask browsers to revalidate all files that aren't explicitly cached
   if (res.getHeader('Cache-Control') === undefined) {
