@@ -72,4 +72,7 @@ module.exports = {
   '.woff2': {
     type: 'font/woff2'
   },
+  '.hex': {
+    type: 'application/octet-stream'
+  }
 };
