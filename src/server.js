@@ -399,6 +399,8 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       headers['Vary'] = 'Accept-Encoding';
     }
 
+    stats.handleServedFile(pathName);
+
     res.sendFile(filePath, {
       headers,
       etag: false,

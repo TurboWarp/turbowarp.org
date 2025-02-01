@@ -131,12 +131,10 @@ const handleRequest = (req) => {
 const handleServedFile = (path) => {
   requests.total++;
 
-  if (path.endsWith('.html')) {
-    if (paths.has(path)) {
-      paths.set(path, paths.get(path) + 1);
-    } else {
-      paths.set(path, 1);
-    }
+  if (paths.has(path)) {
+    paths.set(path, paths.get(path) + 1);
+  } else {
+    paths.set(path, 1);
   }
 };
 
