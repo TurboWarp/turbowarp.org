@@ -245,7 +245,8 @@ app.get([
   '*/manifest.webmanifest',
   '*/images/*',
   // Our sw.js is just a stub; if we actually used it then we would want to not list it here
-  '*/sw.js'
+  '*/sw.js',
+  '*/robots.txt'
 ], (req, res, next) => {
   res.header('Cache-Control', 'public, max-age=604800, immutable');
   next();
