@@ -90,7 +90,9 @@ if (!environment.isTest) {
 }
 
 const handleRequest = (req) => {
-  if (req.headers['dnt'] !== '1') {
+  // We will interpret these headers as a sign that the user is privacy-conscious and doesn't
+  // want to be tracked at all. This isn't really tracking but we will respect them anyways.
+  if (req.headers['dnt'] !== '1' && req.headers['sec-gpc'] !== '1') {
     const ip = req.ip;
     uniques.add(ip);
   }
