@@ -254,10 +254,21 @@ app.get([
 });
 
 app.get('*', (req, res, next) => {
-  // Ask browsers to revalidate all files that aren't explicitly cached
+  // If file didn't explicitly get a cache header added, default to requiring revalidation
   if (res.getHeader('Cache-Control') === undefined) {
     res.setHeader('Cache-Control', 'no-cache');
   }
+  next();
+});
+
+app.get('*', (req, res, next) => {
+  // Errors while loading the initial webpack bundles will offer a link that adds ?nocache=random
+  // and refreshes. We'll tell the browser to actually delete the caches in this case too to increase
+  // likelihood of success.
+  if (req.query.nocache) {
+    res.setHeader('Clear-Site-Data', '"cache"');
+  }
+
   next();
 });
 
