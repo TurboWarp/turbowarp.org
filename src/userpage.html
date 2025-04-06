@@ -25,22 +25,6 @@
       body { background: #111; color: #eee; }
       a { color: #4af; }
     }
-    .label {
-      font-weight: bold;
-    }
-    .freeform {
-      white-space: pre-wrap;
-    }
-    .freeform:empty::after {
-      content: '(empty)';
-      font-style: italic;
-    }
-    .avatar {
-      display: block;
-      width: 128px;
-      height: 128px;
-      margin: 12px 0;
-    }
   </style>
 </head>
 <body>
@@ -49,50 +33,16 @@
   </header>
   <main>
     <p>TurboWarp is for viewing projects. You can view users on <a href="https://scratch.mit.edu/" class="scratch-link">the Scratch website</a> instead.</p>
-    <p>If you're trying to find a user's unshared projects or view the projects of deleted users, that was never the intended primary use of TurboWarp, the Scratch API doesn't tell us, we don't track it either, and the Scratch Team is fixing the root bug anyways.</p>
+    <p>If you're trying to find a user's unshared projects or view the projects of deleted users, this has not been possible for years.</p>
     <p>Questions and concerns can be sent to <a href="https://scratch.mit.edu/users/GarboMuffin/#comments">the usual place</a>.</p>
-    <div class="user-info-available" hidden>
-      <p>The following is everything the Scratch API will tell us about this user:</p>
-      <p class="label">About me:</p>
-      <p class="freeform about"></p>
-      <p class="label">What I'm working on:</p>
-      <p class="freeform wiwo"></p>
-      <p><span class="label">Country:</span> <span class="country"></span></p>
-      <p><span class="label">Account created:</span> <span class="joined"></span></p>
-      <p><span class="label">User ID:</span> <span class="id"></span></p>
-      <p class="label">Avatar:</p>
-      <img class="avatar">
-    </div>
-    <div class="user-info-unavailable" hidden>
-      <p>We tried to find data about this user from the Scratch API, but couldn't find anything.</p>
-    </div>
     <script>
       (function() {
         'use strict';
         var user = location.pathname.split('/')[2];
         var link = document.querySelector('.scratch-link');
-        if (!user) return;
-        link.href = 'https://scratch.mit.edu/users/' + user;
-        /*
-        var xhr = new XMLHttpRequest();
-        xhr.responseType = 'json';
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            var data = xhr.response;
-            document.querySelector('.user-info-available').hidden = false;
-            document.querySelector('.id').textContent = data.id;
-            document.querySelector('.about').textContent = data.profile.bio;
-            document.querySelector('.wiwo').textContent = data.profile.status;
-            document.querySelector('.country').textContent = data.profile.country;
-            document.querySelector('.joined').textContent = new Date(data.history.joined).toUTCString();
-            document.querySelector('.avatar').src = 'https://trampoline.turbowarp.org/avatars/' + data.id;
-          } else {
-            document.querySelector('.user-info-unavailable').hidden = false;
-          }
-        };
-        xhr.open('GET', 'https://trampoline.turbowarp.org/proxy/users/' + user);
-        xhr.send();
-        */
+        if (user) {
+          link.href = 'https://scratch.mit.edu/users/' + user;
+        }
       }());
     </script>
   </main>
