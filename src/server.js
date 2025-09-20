@@ -161,16 +161,11 @@ app.use((req, res, next) => {
       if (
         branchName === 'unsandboxed-extensions' ||
         branchName === 'return' ||
-        branchName === 'merge-upstream'
+        branchName === 'merge-upstream' ||
+        branchName === 'next'
       ) {
         const search = url.parse(req.url).search;
         res.redirect(`https://turbowarp.org${branchRelativePath}${search || ''}`);
-        return;
-      }
-
-      if (branchName === 'next') {
-        const search = url.parse(req.url).search;
-        res.redirect(`https://staging.turbowarp.org${branchRelativePath}${search || ''}`);
         return;
       }
 
