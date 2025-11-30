@@ -3,7 +3,11 @@ const app = require('./server');
 const logger = require('./logger');
 
 const port = process.env.PORT || 8888;
-app.listen(port, () => {
+app.listen(port, (err) => {
+  if (err) {
+    throw err;
+  }
+
   // Update permissions of unix sockets
   if (typeof port === 'string' && port.startsWith('/')) {
     fs.chmod(port, 0o777, (err) => {
@@ -13,5 +17,6 @@ app.listen(port, () => {
       }
     });
   }
+
   logger.info(`Listening on port ${port}`);
 });

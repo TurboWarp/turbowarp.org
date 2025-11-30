@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const url = require('url');
 const promisify = require('util').promisify;
-const asyncHandler = require('express-async-handler');
 const statFile = promisify(fs.stat);
 const readFile = promisify(fs.readFile);
 
@@ -231,8 +230,8 @@ app.get('/users/:user', (req, res) => {
 
 // These files' names contain a hash of their content, so they can be cached forever.
 app.get([
-  '*/js/*',
-  '*/static/assets/*'
+  '{*splat}/js/*splat',
+  '{*splat}/static/assets/*splat'
 ], (req, res, next) => {
   // File names contain hash of content, can cache forever.
   res.header('Cache-Control', 'public, max-age=315360000, immutable');
@@ -241,28 +240,28 @@ app.get([
 
 // These files could change but they are reasonably hot and very rarely will change
 app.get([
-  '*/static/blocks-media/*',
-  '*/favicon.ico',
-  '*/manifest.webmanifest',
-  '*/images/*',
+  '{*splat}/static/blocks-media/*splat',
+  '{*splat}/favicon.ico',
+  '{*splat}/manifest.webmanifest',
+  '{*splat}/images/*splat',
   // Our sw.js is just a stub; if we actually used it then we would want to not list it here
-  '*/sw.js',
-  '*/robots.txt',
-  '*/.well-known/*',
+  '{*splat}/sw.js',
+  '{*splat}/robots.txt',
+  '{*splat}/.well-known/*splat',
 ], (req, res, next) => {
   res.header('Cache-Control', 'public, max-age=604800, immutable');
   next();
 });
 
-app.get('*', (req, res, next) => {
+app.get('*splat', (req, res, next) => {
   // Ask browsers to revalidate all files that aren't explicitly cached
   if (res.getHeader('Cache-Control') === undefined) {
-    res.setHeader('Cache-Control', 'no-cache');
+    res.header('Cache-Control', 'no-cache');
   }
   next();
 });
 
-app.get('/*', asyncHandler(async (req, res, next) => {
+app.get('/{*splat}', async (req, res, next) => {
   let pathName = req.path;
   let projectId = null;
   let projectMeta = null;
@@ -413,7 +412,7 @@ app.get('/*', asyncHandler(async (req, res, next) => {
       index: false,
     });
   }
-}));
+});
 
 app.use((req, res) => {
   stats.handleNotFound(req.path);
