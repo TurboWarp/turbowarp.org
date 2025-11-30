@@ -230,8 +230,8 @@ app.get('/users/:user', (req, res) => {
 
 // These files' names contain a hash of their content, so they can be cached forever.
 app.get([
-  '{*splat}/js/*splat',
-  '{*splat}/static/assets/*splat'
+  '{*_}/js/*_',
+  '{*_}/static/assets/*_'
 ], (req, res, next) => {
   // File names contain hash of content, can cache forever.
   res.header('Cache-Control', 'public, max-age=315360000, immutable');
@@ -240,20 +240,20 @@ app.get([
 
 // These files could change but they are reasonably hot and very rarely will change
 app.get([
-  '{*splat}/static/blocks-media/*splat',
-  '{*splat}/favicon.ico',
-  '{*splat}/manifest.webmanifest',
-  '{*splat}/images/*splat',
+  '{*_}/static/blocks-media/*_',
+  '{*_}/favicon.ico',
+  '{*_}/manifest.webmanifest',
+  '{*_}/images/*_',
   // Our sw.js is just a stub; if we actually used it then we would want to not list it here
-  '{*splat}/sw.js',
-  '{*splat}/robots.txt',
-  '{*splat}/.well-known/*splat',
+  '{*_}/sw.js',
+  '{*_}/robots.txt',
+  '{*_}/.well-known/*_',
 ], (req, res, next) => {
   res.header('Cache-Control', 'public, max-age=604800, immutable');
   next();
 });
 
-app.get('*splat', (req, res, next) => {
+app.get('{*_}', (req, res, next) => {
   // Ask browsers to revalidate all files that aren't explicitly cached
   if (res.getHeader('Cache-Control') === undefined) {
     res.header('Cache-Control', 'no-cache');
@@ -261,7 +261,7 @@ app.get('*splat', (req, res, next) => {
   next();
 });
 
-app.get('/{*splat}', async (req, res, next) => {
+app.get('/{*_}', async (req, res, next) => {
   let pathName = req.path;
   let projectId = null;
   let projectMeta = null;
