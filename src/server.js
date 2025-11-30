@@ -13,6 +13,7 @@ const logger = require('./logger');
 const environment = require('./environment');
 const isSpider = require('./spider');
 const ScratchAPI = require('./scratch-api');
+const parseCookies = require('./cookies');
 
 const notFoundFile = fs.readFileSync(path.join(__dirname, '404.html'));
 const userPageFile = fs.readFileSync(path.join(__dirname, 'userpage.html'));
@@ -126,6 +127,12 @@ app.use((req, res, next) => {
     res.contentType('text/plain');
     res.send('Invalid Host');
     return;
+  }
+
+  const cookies = parseCookies(req);
+  if (cookies.get('tw_clear_cache_once') === '1') {
+    res.header('Clear-Site-Data', '"cache"');
+    res.header('Set-Cookie', 'tw_clear_cache_once=; max-age=0; path=/; samesite=strict; secure');
   }
 
   const host = hosts[hostname];

@@ -1,3 +1,22 @@
-index.html (no encoding)
 <head></head>
-<script src="js/test.js"></script>
+<body>
+    <p>
+        index.html (no encoding)
+    </p>
+
+    <p>
+        <button onclick="hardRefresh()">Activate template.ejs-style hardRefresh()</button>
+    </p>
+    <script>
+        function hardRefresh() {
+            var search = location.search.replace(/[?&]nocache=[\d.]+(?=$|&)/, '');
+            // This is a functional cookie used so that we respond with Clear-Site-Data just once. No tracking.
+            // Can't use nocache parameter to trigger this because people might accidentally bookmark that, and
+            // then we would be clearing their cache on every visit.
+            document.cookie = 'tw_clear_cache_once=1; max-age=60; path=/; samesite=strict; secure';
+            location.replace(location.pathname + search + (search ? '&' : '?') + 'nocache=' + Math.floor(Math.random() * 10000000));
+        }
+    </script>
+
+    <script src="js/test.js"></script>
+</body>
