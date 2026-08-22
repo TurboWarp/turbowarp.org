@@ -41,7 +41,7 @@ app.set('x-powered-by', false);
 app.set('etag', false);
 app.set('case sensitive routing', false);
 app.set('strict routing', false);
-app.set('trust proxy', true);
+app.set('trust proxy', 'loopback');
 
 const escapeHTML = str => str.replace(/([<>'"&])/g, (_, l) => `&#${l.charCodeAt(0)};`);
 
