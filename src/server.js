@@ -41,7 +41,10 @@ app.set('x-powered-by', false);
 app.set('etag', false);
 app.set('case sensitive routing', false);
 app.set('strict routing', false);
-app.set('trust proxy', 'loopback');
+
+// Using trust proxy is not a security issue. Our nginx configuration reliably sets XFF to the address
+// that makes sense for the context. We also use unix sockets so loopback mode is not usable.
+app.set('trust proxy', 1);
 
 const escapeHTML = str => str.replace(/([<>'"&])/g, (_, l) => `&#${l.charCodeAt(0)};`);
 
