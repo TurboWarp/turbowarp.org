@@ -9,6 +9,7 @@ const readFile = promisify(fs.readFile);
 const fileTypes = require('./types');
 const hosts = require('./hosts');
 const stats = require('./stats');
+const metrics = require('./metrics');
 const logger = require('./logger');
 const environment = require('./environment');
 const isSpider = require('./spider');
@@ -45,6 +46,8 @@ app.set('strict routing', false);
 // Using trust proxy is not a security issue. Our nginx configuration reliably sets XFF to the address
 // that makes sense for the context. We also use unix sockets so loopback mode is not usable.
 app.set('trust proxy', 1);
+
+app.use(metrics.middleware);
 
 const escapeHTML = str => str.replace(/([<>'"&])/g, (_, l) => `&#${l.charCodeAt(0)};`);
 
@@ -271,7 +274,20 @@ app.get('{*_}', (req, res, next) => {
   next();
 });
 
+const getMetricsRoute = (req, file) => {
+  // File exists at this point, so to avoid exploding cardinality we just need to redact out the paths
+  // that would have high entropy while still letting us a get sense of what's going on.
+  // .../js/*
+  // .../static/blocks-media/*
+  // .../static/assets/*
+  const rel = path.relative(req.root, file).toLowerCase();
+  return rel.replace(/(^|[\\/])(js|blocks-media|assets)[\\/].*$/, '$1$2/*');
+};
+
 app.get('/{*_}', async (req, res, next) => {
+  // Fallback - don't let 404 explode cardinality
+  req.metricsRoute = 'other';
+
   let pathName = req.path;
   let projectId = null;
   let projectMeta = null;
@@ -356,6 +372,8 @@ app.get('/{*_}', async (req, res, next) => {
   }
   const varyAcceptEncoding = fileEncodings.length > 0;
 
+  req.metricsRoute = getMetricsRoute(req, foundFile.path);
+
   if (requiresSpecialRewriting) {
     let fileContents = await readFile(filePath, 'utf-8');
 
@@ -426,7 +444,6 @@ app.get('/{*_}', async (req, res, next) => {
 });
 
 app.use((req, res) => {
-  stats.handleNotFound(req.path);
   res.status(404);
   res.setHeader('Cache-Control', 'no-cache');
   res.contentType('text/html');

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const app = require('./server');
 const logger = require('./logger');
+const metrics = require('./metrics');
 
 const port = process.env.PORT || 8888;
 app.listen(port, (err) => {
@@ -20,3 +21,5 @@ app.listen(port, (err) => {
 
   logger.info(`Listening on port ${port}`);
 });
+
+metrics.listen();
