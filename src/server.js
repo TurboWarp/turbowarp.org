@@ -127,6 +127,9 @@ app.use((req, res, next) => {
   res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.header('Permissions-Policy', 'interest-cohort=()');
 
+  // Grant access to SharedArrayBuffer and high resolution performance.now() in some browsers.
+  res.header('Document-Isolation-Policy', 'isolate-and-credentialless');
+
   const hostname = req.hostname;
   if (!hosts.hasOwnProperty(hostname)) {
     res.status(400);
