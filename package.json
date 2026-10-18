@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "NODE_ENV=test node --test 'test/*.test.js'",
+    "test:watch": "NODE_ENV=test node --test --watch 'test/*.test.js'"
   },
   "author": "",
   "license": "MIT",
@@ -16,7 +16,6 @@
     "winston-daily-rotate-file": "^4.5.0"
   },
   "devDependencies": {
-    "jest": "^30.2.0",
     "supertest": "^7.1.4"
   },
   "private": true

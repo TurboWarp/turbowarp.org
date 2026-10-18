@@ -1,3 +1,5 @@
+const { it } = require('node:test');
+const assert = require('node:assert/strict');
 const supertest = require('supertest');
 const app = require('../src/server');
 const request = supertest(app);

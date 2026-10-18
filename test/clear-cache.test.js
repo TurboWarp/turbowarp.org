@@ -1,10 +1,12 @@
+const { it } = require('node:test');
+const assert = require('node:assert/strict');
 const supertest = require('supertest');
 const app = require('../src/server');
 const request = supertest(app);
 
 it('does not serve clear-site-data by default', async () => {
   const data = await request.get('/').set('Host', 'localhost');
-  expect(data.headers['clear-site-data']).toBeUndefined();
+  assert.equal(data.headers['clear-site-data'], undefined);
 });
 
 it('servers clear-site-data for cookie', async () => {
