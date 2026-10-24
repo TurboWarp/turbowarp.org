@@ -414,7 +414,7 @@ app.get('/{*_}', async (req, res, next) => {
       newHead = '<meta name="robots" content="noindex">';
     }
     if (newHead) {
-      fileContents = fileContents.replace('</head>', newHead + '</head>');
+      fileContents = fileContents.replace('</head>', () => newHead + '</head>');
     }
 
     res.setHeader('Content-Type', fileType.type);
