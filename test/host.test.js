@@ -26,3 +26,14 @@ it('returns 400 if no host', () => {
   return request.get('/')
     .expect(400);
 });
+
+it('ignores X-Forwarded-Host', async () => {
+  await request.get('/index.html')
+    .set('Host', 'localhost')
+    .set('X-Forwarded-Host', 'notlocalhost')
+    .expect(200);
+  await request.get('/test.html')
+    .set('Host', 'localhost')
+    .set('X-Forwarded-Host', 'notlocalhost')
+    .expect(404);
+});
