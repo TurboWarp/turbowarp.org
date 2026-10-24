@@ -6,19 +6,13 @@ const INTERVAL = 1000 * 60 * 60;
 
 const createPathsData = () => new Map();
 
-const createUniquesData = () => new Set();
-
 let paths = createPathsData();
-let uniques = createUniquesData();
 const reset = () => {
   paths = createPathsData();
-  uniques = createUniquesData();
 };
 
 const print = () => {
   logger.info(`*** ${new Date().toUTCString()} ***`);
-
-  logger.info(` Uniques: ${uniques.size}`);
 
   logger.info('--- Paths ---');
   const entries = Array.from(paths.entries()).sort((a, b) => b[1] - a[1]);
@@ -34,13 +28,6 @@ if (!environment.isTest) {
 }
 
 const handleRequest = (req) => {
-  // We will interpret these headers as a sign that the user is privacy-conscious and doesn't
-  // want to be tracked at all. This isn't really tracking but we will respect them anyways.
-  if (req.headers['dnt'] !== '1' && req.headers['sec-gpc'] !== '1') {
-    const ip = req.ip;
-    uniques.add(ip);
-  }
-
   const userAgent = req.headers['user-agent'];
   let browser;
   let os;
