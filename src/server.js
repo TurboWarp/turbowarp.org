@@ -153,7 +153,7 @@ app.use((req, res, next) => {
   }
 
   if (branches) {
-    const branchMatch = path.match(/^\/([\w\d_-]+)\/?/);
+    const branchMatch = path.match(/^\/([\w\d_-]+)(?=\/|$)/);
     if (branchMatch) {
       const branchName = branchMatch[1];
       const prefix = `/${branchName}`;

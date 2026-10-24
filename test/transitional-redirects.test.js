@@ -86,3 +86,12 @@ it('next: redirects', async () => {
     .expect(302);
   assert.equal(req.headers['location'], 'https://turbowarp.org/editor?fps=60');
 });
+
+it('branch names must end at a path segment boundary', async () => {
+  for (const branch of ['interpolation', 'interpolated-60', 'sounds-no-yield', 'no-limits', 'unsandboxed-extensions', 'return', 'merge-upstream', 'next']) {
+    const req = await request.get(`/${branch}.evil.com`)
+      .set('Host', 'notlocalhost')
+      .expect(404);
+    assert.equal(req.headers['location'], undefined);
+  }
+});
